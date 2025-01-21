@@ -1,0 +1,266 @@
+[gd_scene load_steps=4 format=3 uid="uid://ctlhad5adnkri"]
+
+[ext_resource type="Script" path="res://addons/GProgress/Panels/Button Panel/panel.gd" id="1_7f7ds"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_dlb1p"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_j5fbo"]
+
+[node name="Control" type="Control"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7f7ds")
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -35.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Tab" type="TabContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="User Settings" type="GridContainer" parent="Scroll/Tab"]
+layout_mode = 2
+columns = 2
+
+[node name="UserSlots" type="Label" parent="Scroll/Tab/User Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Specifies the number of users allowed to register."
+mouse_filter = 1
+text = "User Slots:	"
+
+[node name="user_slots" type="SpinBox" parent="Scroll/Tab/User Settings"]
+layout_mode = 2
+tooltip_text = "An integer greater than 0."
+min_value = 1.0
+value = 3.0
+allow_greater = true
+alignment = 1
+
+[node name="UserParameters" type="Label" parent="Scroll/Tab/User Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Specifies the parameters required by the user."
+mouse_filter = 1
+text = "User Parameters:    "
+
+[node name="user_parameters" type="LineEdit" parent="Scroll/Tab/User Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "comma seperated value"
+text = "id, index, name, last_open, last_save"
+placeholder_text = "comma seperated value"
+
+[node name="LimitPerUser" type="Label" parent="Scroll/Tab/User Settings"]
+layout_mode = 2
+tooltip_text = "Limits the number of saves allowed per user, if the number reaches this number it will be deleted from the end. Change to 0 for unlimited."
+mouse_filter = 1
+text = "Limit Per User:"
+
+[node name="limit_per_user" type="SpinBox" parent="Scroll/Tab/User Settings"]
+layout_mode = 2
+tooltip_text = "Nonnegative integer."
+value = 50.0
+allow_greater = true
+alignment = 1
+
+[node name="Progress Settings" type="GridContainer" parent="Scroll/Tab"]
+visible = false
+layout_mode = 2
+columns = 2
+
+[node name="ProgressParameters" type="Label" parent="Scroll/Tab/Progress Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "It keeps the parameters of each progress save."
+mouse_filter = 1
+text = "Progress Parameters:"
+
+[node name="progress_parameters" type="LineEdit" parent="Scroll/Tab/Progress Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "comma seperated value"
+text = "id, index, name, detailes, date, time, tag"
+placeholder_text = "comma seperated value"
+
+[node name="PreviewParameters" type="Label" parent="Scroll/Tab/Progress Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The preview parameters hold each progress save, must be selected from the list above."
+mouse_filter = 1
+text = "Preview Parameters:"
+
+[node name="preview_parameters" type="LineEdit" parent="Scroll/Tab/Progress Settings"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "comma seperated value"
+text = "name, detailes, date, time, tag"
+placeholder_text = "comma seperated value"
+
+[node name="Save & Backup" type="GridContainer" parent="Scroll/Tab"]
+visible = false
+layout_mode = 2
+columns = 3
+
+[node name="AutosaveInterval" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Specifies the time period for each autosave request, sending a signal if it is due."
+mouse_filter = 1
+text = "Auto-Save Interval:"
+
+[node name="autosave_interval" type="SpinBox" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Value"
+allow_greater = true
+alignment = 1
+
+[node name="autosave_interval2" type="OptionButton" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Unit"
+item_count = 6
+selected = 0
+allow_reselect = true
+popup/item_0/text = "Disable"
+popup/item_0/id = 0
+popup/item_1/text = ""
+popup/item_1/id = 10
+popup/item_1/separator = true
+popup/item_2/text = "Day"
+popup/item_2/id = 1
+popup/item_3/text = "Week"
+popup/item_3/id = 2
+popup/item_4/text = "Month"
+popup/item_4/id = 3
+popup/item_5/text = "Year"
+popup/item_5/id = 4
+
+[node name="SavePath" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+tooltip_text = "Specifies the path to the save."
+mouse_filter = 1
+text = "Save Path:"
+
+[node name="SavePath2" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+text = "C://Test"
+text_overrun_behavior = 3
+
+[node name="save_path" type="Button" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+text = "Choose..."
+
+[node name="BackupInterval" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Specifies the time period for each automatic backup, the backup will be taken from the last saved progress."
+mouse_filter = 1
+text = "Backup Interval:"
+
+[node name="backup_interval" type="SpinBox" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Value"
+alignment = 1
+
+[node name="backup_interval2" type="OptionButton" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Unit"
+item_count = 6
+selected = 0
+allow_reselect = true
+popup/item_0/text = "Disable"
+popup/item_0/id = 0
+popup/item_1/text = ""
+popup/item_1/id = 10
+popup/item_1/separator = true
+popup/item_2/text = "Day"
+popup/item_2/id = 1
+popup/item_3/text = "Week"
+popup/item_3/id = 2
+popup/item_4/text = "Month"
+popup/item_4/id = 3
+popup/item_5/text = "Year"
+popup/item_5/id = 4
+
+[node name="BackupPath" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+tooltip_text = "Specifies the path to the backup. (It is recommended to select a separate folder of saves)"
+mouse_filter = 1
+text = "Backup Path:"
+
+[node name="BackupPath2" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+text = "D://Test"
+text_overrun_behavior = 3
+
+[node name="backup_path" type="Button" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+text = "Choose..."
+
+[node name="Compression" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+tooltip_text = "Allows you to disable compression of progress saves, does not affect previous saves."
+mouse_filter = 1
+text = "Compression:"
+
+[node name="compression" type="CheckBox" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+button_pressed = true
+button_group = SubResource("ButtonGroup_dlb1p")
+text = "Enable"
+
+[node name="compression2" type="CheckBox" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_dlb1p")
+text = "Disable"
+
+[node name="Encryption" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+tooltip_text = "Controls internal advanced encryption, if off, saves can be transferred to other users or devices by copying them."
+mouse_filter = 1
+text = "Encryption:"
+
+[node name="encryption" type="CheckBox" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+button_pressed = true
+button_group = SubResource("ButtonGroup_j5fbo")
+text = "Enable"
+
+[node name="encryption2" type="CheckBox" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_j5fbo")
+text = "Disable"
+
+[node name="HFlowContainer" type="HFlowContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -31.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Button" type="Button" parent="HFlowContainer"]
+layout_mode = 2
+text = "Open file"
+
+[node name="Button2" type="Button" parent="HFlowContainer"]
+layout_mode = 2
+text = "Reset to defaults"
