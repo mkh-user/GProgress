@@ -18,7 +18,7 @@ script = ExtResource("1_7f7ds")
 
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_bottom = -35.0
@@ -32,6 +32,8 @@ size_flags_vertical = 3
 
 [node name="User Settings" type="GridContainer" parent="Scroll/Tab"]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 columns = 2
 
 [node name="UserSlots" type="Label" parent="Scroll/Tab/User Settings"]
@@ -79,6 +81,8 @@ alignment = 1
 [node name="Progress Settings" type="GridContainer" parent="Scroll/Tab"]
 visible = false
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 columns = 2
 
 [node name="ProgressParameters" type="Label" parent="Scroll/Tab/Progress Settings"]
@@ -112,6 +116,8 @@ placeholder_text = "comma seperated value"
 [node name="Save & Backup" type="GridContainer" parent="Scroll/Tab"]
 visible = false
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 columns = 3
 
 [node name="AutosaveInterval" type="Label" parent="Scroll/Tab/Save & Backup"]
@@ -125,6 +131,7 @@ text = "Auto-Save Interval:"
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Value"
+value = 1.0
 allow_greater = true
 alignment = 1
 
@@ -133,7 +140,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Unit"
 item_count = 6
-selected = 0
+selected = 4
 allow_reselect = true
 popup/item_0/text = "Disable"
 popup/item_0/id = 0
@@ -157,7 +164,7 @@ text = "Save Path:"
 
 [node name="SavePath2" type="Label" parent="Scroll/Tab/Save & Backup"]
 layout_mode = 2
-text = "C://Test"
+text = "user://GProgress/Saves/"
 text_overrun_behavior = 3
 
 [node name="save_path" type="Button" parent="Scroll/Tab/Save & Backup"]
@@ -175,6 +182,7 @@ text = "Backup Interval:"
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Value"
+value = 3.0
 alignment = 1
 
 [node name="backup_interval2" type="OptionButton" parent="Scroll/Tab/Save & Backup"]
@@ -182,7 +190,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Unit"
 item_count = 6
-selected = 0
+selected = 4
 allow_reselect = true
 popup/item_0/text = "Disable"
 popup/item_0/id = 0
@@ -206,7 +214,7 @@ text = "Backup Path:"
 
 [node name="BackupPath2" type="Label" parent="Scroll/Tab/Save & Backup"]
 layout_mode = 2
-text = "D://Test"
+text = "user://GProgress/Backups/"
 text_overrun_behavior = 3
 
 [node name="backup_path" type="Button" parent="Scroll/Tab/Save & Backup"]
@@ -247,7 +255,29 @@ layout_mode = 2
 button_group = SubResource("ButtonGroup_j5fbo")
 text = "Disable"
 
-[node name="HFlowContainer" type="HFlowContainer" parent="."]
+[node name="EncryptionKey" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "It keeps the parameters of each progress save."
+mouse_filter = 1
+text = "Encryption Key:"
+
+[node name="EncryptionKey2" type="Label" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "It keeps the parameters of each progress save."
+mouse_filter = 1
+
+[node name="encryption_key" type="LineEdit" parent="Scroll/Tab/Save & Backup"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "32 Chars!"
+text = "q3@g.<9gF[JK-%qqAscBcf,>?k*lOpse"
+placeholder_text = "32 chars"
+alignment = 1
+max_length = 32
+
+[node name="HFlow" type="HFlowContainer" parent="."]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -257,10 +287,51 @@ offset_top = -31.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="Button" type="Button" parent="HFlowContainer"]
+[node name="OpenFile" type="Button" parent="HFlow"]
 layout_mode = 2
 text = "Open file"
 
-[node name="Button2" type="Button" parent="HFlowContainer"]
+[node name="ReloadFromFile" type="Button" parent="HFlow"]
+layout_mode = 2
+text = "Reload from file"
+
+[node name="ResetToDefaults" type="Button" parent="HFlow"]
 layout_mode = 2
 text = "Reset to defaults"
+
+[node name="SavePath" type="FileDialog" parent="."]
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(600, 400)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 1
+
+[node name="BackupPath" type="FileDialog" parent="."]
+title = "Open a Directory"
+initial_position = 1
+size = Vector2i(600, 400)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+
+[connection signal="value_changed" from="Scroll/Tab/User Settings/user_slots" to="." method="_on_save_changes"]
+[connection signal="text_changed" from="Scroll/Tab/User Settings/user_parameters" to="." method="_on_save_changes"]
+[connection signal="value_changed" from="Scroll/Tab/User Settings/limit_per_user" to="." method="_on_save_changes"]
+[connection signal="text_changed" from="Scroll/Tab/Progress Settings/progress_parameters" to="." method="_on_save_changes"]
+[connection signal="text_changed" from="Scroll/Tab/Progress Settings/preview_parameters" to="." method="_on_save_changes"]
+[connection signal="value_changed" from="Scroll/Tab/Save & Backup/autosave_interval" to="." method="_on_save_changes"]
+[connection signal="item_selected" from="Scroll/Tab/Save & Backup/autosave_interval2" to="." method="_on_save_changes"]
+[connection signal="pressed" from="Scroll/Tab/Save & Backup/save_path" to="." method="_on_save_path_pressed"]
+[connection signal="value_changed" from="Scroll/Tab/Save & Backup/backup_interval" to="." method="_on_save_changes"]
+[connection signal="item_selected" from="Scroll/Tab/Save & Backup/backup_interval2" to="." method="_on_save_changes"]
+[connection signal="pressed" from="Scroll/Tab/Save & Backup/backup_path" to="." method="_on_backup_path_pressed"]
+[connection signal="pressed" from="Scroll/Tab/Save & Backup/compression" to="." method="_on_save_changes_2"]
+[connection signal="pressed" from="Scroll/Tab/Save & Backup/compression2" to="." method="_on_save_changes_2"]
+[connection signal="pressed" from="Scroll/Tab/Save & Backup/encryption" to="." method="_on_save_changes_2"]
+[connection signal="pressed" from="Scroll/Tab/Save & Backup/encryption2" to="." method="_on_save_changes_2"]
+[connection signal="text_changed" from="Scroll/Tab/Save & Backup/encryption_key" to="." method="_on_save_changes"]
+[connection signal="pressed" from="HFlow/OpenFile" to="." method="_on_open_file_pressed"]
+[connection signal="pressed" from="HFlow/ReloadFromFile" to="." method="_on_reload_from_file_pressed"]
+[connection signal="pressed" from="HFlow/ResetToDefaults" to="." method="_on_reset_to_defaults_pressed"]
+[connection signal="dir_selected" from="SavePath" to="." method="_on_save_path_dir_selected"]
+[connection signal="dir_selected" from="BackupPath" to="." method="_on_backup_path_dir_selected"]

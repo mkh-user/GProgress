@@ -14,6 +14,10 @@ config/name="GProgress"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+GPro="*res://addons/GProgress/GPro/GProgress.gd"
+
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/GProgress/plugin.cfg")
