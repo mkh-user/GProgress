@@ -68,8 +68,6 @@ func restart(reset_when_failed: bool = false) -> void:
 ## - is_initiailized [bool]:[br]
 ## - - If the plugin is initialized: [code]true[/code][br]
 ## - - If the plugin isn't initialized: [code]false[/code][br]
-## [b]ERR:[/b][br]
-## - NOTHING[br]
 func is_initialized(initialize_if_not: bool = false) -> bool:
 	if FileAccess.file_exists(_USERS_FILE):
 		return true
@@ -84,8 +82,6 @@ func is_initialized(initialize_if_not: bool = false) -> bool:
 ## [b]Out:[/b][br]
 ## - Error [enum @GlobalScope.Error]:[br]
 ## - - See [method FileAccess.get_open_error][br]
-## [b]ERR:[/b][br]
-## - NOTHING[br]
 func initialize() -> Error:
 	return _save_file(_USERS_FILE, {})
 #endregion
@@ -102,8 +98,6 @@ func initialize() -> Error:
 ## - - If all keys are not the same as the config, have different names, or are not sorted in the config order: [code]ERR_INVALID_PARAMETER[/code][br]
 ## - - If there is a problem saving the users file: See [method FileAccess.get_open_error][br]
 ## - - Otherwise: [code]OK[/code][br]
-## [b]ERR:[/b][br]
-## - NOTHING
 func create_user(parameters: Dictionary) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
@@ -134,8 +128,6 @@ func create_user(parameters: Dictionary) -> Error:
 ## - - If there is a problem deleting user's saves: See [method DirAccess.remove_absolute][br]
 ## - - If there is a problem saving the users file: See [method FileAccess.get_open_error][br]
 ## - - Otherwise: [code]OK[/code][br]
-## [b]ERR:[/b][br]
-## - NOTHING
 func remove_user(id: String) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
@@ -224,8 +216,6 @@ func get_all_user_parameters(id: String) -> Dictionary:
 ## - - If any key is not in the config or have different names: [code]ERR_INVALID_PARAMETER[/code][br]
 ## - - If there is a problem saving the users file: See [method FileAccess.get_open_error][br]
 ## - - Otherwise: [code]OK[/code][br]
-## [b]ERR:[/b][br]
-## - NOTHING[br]
 ## [b]Note:[/b] [code]id[/code], [code]last_open[/code] and [code]last_save[/code] keys cannot be changed, if you change them in the [param parameters], it has no effect.
 func set_all_user_parameters(id: String, parameters: Dictionary) -> Error:
 	if _killed: return ERR_CANT_CONNECT
@@ -251,8 +241,6 @@ func set_all_user_parameters(id: String, parameters: Dictionary) -> Error:
 ## - - If [param key] is [code]id[/code], [code]last_save[/code] or [code]last_save[/code],: [code]ERR_LOCKED[/code][br]
 ## - - If there is a problem saving the users file: See [method FileAccess.get_open_error][br]
 ## - - Otherwise: [code]OK[/code][br]
-## [b]ERR:[/b][br]
-## - NOTHING[br]
 func set_user_parameter(id: String, key: String, value: Variant) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
@@ -320,8 +308,6 @@ func get_user_parameter(id: String, key: String) -> Variant:
 ## - - If the user [param id] isn't exist: [code]ERR_DOES_NOT_EXIST[/code][br]
 ## - - If there is a problem saving the users file: See [method FileAccess.get_open_error][br]
 ## - - Otherwise: [code]OK[/code][br]
-## [b]ERR:[/b][br]
-## - NOTHING[br]
 func record_open_user(id: String) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
@@ -344,8 +330,6 @@ func record_open_user(id: String) -> Error:
 ## - - If there is a problem saving the users file: See [method FileAccess.get_open_error][br]
 ## - - If there is a problem deleting oldest files: See [method DirAccess.remove_absolute][br]
 ## - - Otherwise: [code]OK[/code][br]
-## [b]ERR:[/b][br]
-## - NOTHING[br]
 func save_progress(id: String, parameters: Dictionary, auto_datetime: bool = true) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
@@ -372,9 +356,9 @@ func save_progress(id: String, parameters: Dictionary, auto_datetime: bool = tru
 	return _err
 
 
-func _save_progress(id: String, progress: Dictionary, in_costum_path: bool = false, custom_path: String = "") -> Error:
+func _save_progress(id: String, progress: Dictionary, in_costum_dir: bool = false, custom_dir: String = "") -> Error:
 	var save_dir = ProjectSettings.globalize_path(_config["save_path"].get_base_dir()).path_join(id)
-	if in_costum_path: save_dir = custom_path
+	if in_costum_dir: save_dir = custom_dir
 	if not DirAccess.dir_exists_absolute(save_dir):
 		if DirAccess.make_dir_recursive_absolute(save_dir):
 			return DirAccess.make_dir_recursive_absolute(save_dir)
@@ -488,10 +472,21 @@ func _load_progress(path: String) -> Dictionary:
 	return progress
 
 
+## [b]SD:[/b] Removes specified progress from target user[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param progress_id] [int]: id of target progress.[br]
+## [b]Out:[/b][br]
+## - Error [enum @GlobalScope.Error]:[br]
+## - - If there is a problem loading the users file: See [method FileAccess.get_open_error][br]
+## - - If the user [param id] isn't exist: [code]ERR_DOES_NOT_EXIST[/code][br]
+## - - If the saves folder isn't exist: [code]ERR_DOES_NOT_EXIST[/code][br]
+## - - If there is a problem deleting file: See [method DirAccess.remove_absolute][br]
+## - - Otherwise: [code]OK[/code][br]
 func remove_progress(id: String, progress_id: int) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _invalid_id(id): return ERR_INVALID_PARAMETER
+	if _invalid_id(id): return ERR_DOES_NOT_EXIST
 	var save_dir = ProjectSettings.globalize_path(_config["save_path"].get_base_dir()).path_join(id)
 	if not DirAccess.dir_exists_absolute(save_dir):
 		return ERR_DOES_NOT_EXIST
@@ -499,10 +494,20 @@ func remove_progress(id: String, progress_id: int) -> Error:
 	return DirAccess.remove_absolute(save_path)
 
 
+## [b]SD:[/b] Quickly saves a progress, default parameters are automatically set (even if they exist in the dictionary)[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param parameters] [Dictionary]: a dictionary from progress parameters (with or withuot "id", "name", "details", "date", "time" and "tag" keys (Automated parameters).[br]
+## [b]Out:[/b][br]
+## - Error [enum @GlobalScope.Error]:[br]
+## - - If there is a problem loading the users file: See [method FileAccess.get_open_error][br]
+## - - If the user [param id] isn't exist: [code]ERR_DOES_NOT_EXIST[/code][br]
+## - - If there is a problem saving progress: See [method save_progress][br]
+## - - Otherwise: [code]OK[/code][br]
 func quick_progress(id: String, parameters: Dictionary) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _invalid_id(id): return ERR_INVALID_PARAMETER
+	if _invalid_id(id): return ERR_DOES_NOT_EXIST
 	var progress := {}
 	for key in parameters.keys():
 		if _invalid_progress_parameter(key): continue
@@ -517,33 +522,81 @@ func quick_progress(id: String, parameters: Dictionary) -> Error:
 	return _save_progress(id, progress)
 
 
-## [b]SD:[/b] Create a backup in backup path[br]
+## [b]SD:[/b] Creates a backup in backup path[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param progress_id] [int]: unique progress id for target progress, if set it to [code]-1[/code] (default value) ctreate backup from last progress.[br]
+## [b]Out:[/b][br]
+## - Error [enum @GlobalScope.Error]:[br]
+## - - If there is a problem loading the users file: See [method FileAccess.get_open_error][br]
+## - - If the user [param id] isn't exist: [code]ERR_DOES_NOT_EXIST[/code][br]
+## - - If there is a problem saving backup: See [method save_progress][br]
+## - - Otherwise: [code]OK[/code][br]
 func backup_progress(id: String, progress_id: int = -1) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _invalid_id(id): return ERR_INVALID_PARAMETER
+	if _invalid_id(id): return ERR_DOES_NOT_EXIST
 	if progress_id == -1: progress_id = get_last_progress_id(id)
 	var last_save = load_progress(id, progress_id)
-	_save_progress(id, last_save, true, _config["backup_path"])
-	return OK
+	return _save_progress(id, last_save, true, _config["backup_path"])
 
 
+## [b]SD:[/b] Loads a backup from [param backup_path][br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param backup_path] [String]: path for target backup file, see also [method get_backup_list].[br]
+## [b]Out:[/b][br]
+## - Error [enum @GlobalScope.Error]:[br]
+## - - If there is a problem loading the users file: See [method FileAccess.get_open_error][br]
+## - - If the user [param id] isn't exist: [code]ERR_DOES_NOT_EXIST[/code][br]
+## - - If there is a problem in load, parse, decrypt, decompression: See [method load_progress][br]
+## - - If there is a problem saving progress: See [method save_progress][br]
+## - - Otherwise: [code]OK[/code][br]
+## [b]Note:[/b] This function save a new progress from backup file to target user, after use it you need to use [method load_progress] for apply progress properties.[br]
 func load_backup_progress(id: String, backup_path: String) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _invalid_id(id): return ERR_INVALID_PARAMETER
+	if _invalid_id(id): return ERR_DOES_NOT_EXIST
 	var backup = _load_progress(backup_path)
-	if backup == {}:
-		return ERR_FILE_CANT_READ
+	if backup == {}: return ERR_FILE_CANT_READ
 	return save_progress(id, backup)
+
+## [b]SD:[/b] Returns an array with all saved backup files in backup path in configs[br]
+## [b]In:[/b][br]
+## - NOTHING[br]
+## [b]Out:[/b][br]
+## - backups_list [Array]:[br]
+## - - An array with path of all files in [code]Backup Path[/code] config.[br]
+func get_backups_list() -> Array:
+	return DirAccess.get_files_at(_config["backup_path"])
 
 
 ## [b]SD:[/b] Returns a dictionary from specified parameter in user progresses by date-time, date, time or progress id[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param key] [String]: key in confgis for extract from progresses.[br]
+## [b]Out:[/b][br]
+## - statistics [Dictionary]:[br]
+## - - If there is a problem loading the users file: [code]{}[/code][br]
+## - - If the user [param id] isn't exist: [code]{}[/code][br]
+## - - If [param key] is invalid parameters: [code]{}[/code][br]
+## - - Otherwise: A dictionary from status of target parameter in all progresses, if progresses has "date" and "time" parameter use these for keys in dictionary, if just one of "date" and "time" are valid parameter use that, and otherwise use progress id. All times sort progresses by id (date-time sort).[br]
+## [b]ERR:[/b][br]
+## - See [method get_last_error].
 func get_parameter_stats(id: String, key: String) -> Dictionary:
-	if _killed: return {}
-	if _load_users(): return {}
-	if _invalid_id(id): return {}
-	if _invalid_progress_parameter(key): return {}
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return {}
+	if _load_users():
+		_err = _load_users()
+		return {}
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return {}
+	if _invalid_progress_parameter(key):
+		_err = ERR_INVALID_PARAMETER
+		return {}
 	var use_date = not _invalid_progress_parameter("date")
 	var use_time = not _invalid_progress_parameter("time")
 	var stats = {}
@@ -566,10 +619,29 @@ func get_parameter_stats(id: String, key: String) -> Dictionary:
 	return stats
 
 
+## [b]SD:[/b] Returns a dictionary from specified progress in user progresses include preview parameters.[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param progress_id] [int]: unique progress id for target progress.[br]
+## [b]Out:[/b][br]
+## - statistics [Dictionary]:[br]
+## - - If there is a problem loading the users file: [code]{}[/code][br]
+## - - If the user [param id] isn't exist: [code]{}[/code][br]
+## - - If there is a problem in load, parse, decrypt, decompression: [code]{}[/code][br]
+## - - Otherwise: See [method load_progress].[br]
+## [b]ERR:[/b][br]
+## - See [method get_last_error].
 func get_progress_preview(id: String, progress_id: int) -> Dictionary:
-	if _killed: return {}
-	if _load_users(): return {}
-	if _invalid_id(id): return {}
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return {}
+	if _load_users():
+		_err = _load_users()
+		return {}
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return {}
 	var progress = load_progress(id, progress_id)
 	var preview := {}
 	while _config["preview_parameters"].find(" ") != -1:
@@ -581,57 +653,152 @@ func get_progress_preview(id: String, progress_id: int) -> Dictionary:
 	return preview
 
 
+## [b]SD:[/b] Returns an array from all progresses for target use in order by specified key.[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param key] [String]: progress parameter key for order.[br]
+## [b]Out:[/b][br]
+## - progresses [Array]:[br]
+## - - If there is a problem loading the users file: [code][][/code][br]
+## - - If the user [param id] isn't exist: [code][][/code][br]
+## - - If [param key] is invalid: [code][][/code][br]
+## - - If there is a problem in load, parse, decrypt, decompression: Skip that progress[br]
+## - - Otherwise: A dictionary from all progresses with [code]progress_id: progress_values[/code] format in order by [param key]. See also [method load_progress].[br]
+## [b]ERR:[/b][br]
+## - See [method get_last_error].
 func order_by_parameter_in_array(id: String, key: String) -> Array:
-	if _killed: return []
-	if _load_users(): return []
-	if _invalid_id(id): return []
-	if _invalid_progress_parameter(key): return []
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return []
+	if _load_users():
+		_err = _load_users()
+		return []
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return []
+	if _invalid_progress_parameter(key):
+		_err = ERR_INVALID_PARAMETER
+		return []
 	var record := {}
 	var progress
 	for save in DirAccess.get_files_at(ProjectSettings.globalize_path(_config["save_path"].get_base_dir()).path_join(id)):
 		progress = _load_progress(save)
-		record[progress["id"]] = progress[key]
+		record[progress["id"]] = progress
 	var sorted_keys = record.keys()
-	sorted_keys.sort_custom(func(a, b): return record[a] < record[b])
+	sorted_keys.sort_custom(func(a, b): return record[a][key] < record[b][key])
 	return sorted_keys
 
-
+## @experimental
+## [color=Yellow]Experimental:[/color] Sort system in this function is experimental, recommended use [method order_by_parameter_in_array] instead.[br]
+## [b]SD:[/b] Returns a dictionary from all progresses for target use in order by specified key.[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param key] [String]: progress parameter key for order.[br]
+## [b]Out:[/b][br]
+## - progresses [Dictionary]:[br]
+## - - If there is a problem loading the users file: [code]{}[/code][br]
+## - - If the user [param id] isn't exist: [code]{}[/code][br]
+## - - If [param key] is invalid: [code]{}[/code][br]
+## - - If there is a problem in load, parse, decrypt, decompression: Skip that progress[br]
+## - - Otherwise: A dictionary from all progresses with [code]progress_id: progress_values[/code] format in order by [param key]. See also [method load_progress].[br]
+## [b]ERR:[/b][br]
+## - See [method get_last_error].
 func order_by_parameter_in_dictionary(id: String, key: String) -> Dictionary:
-	if _killed: return {}
-	if _load_users(): return {}
-	if _invalid_id(id): return {}
-	if _invalid_progress_parameter(key): return {}
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return {}
+	if _load_users():
+		_err = _load_users()
+		return {}
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return {}
+	if _invalid_progress_parameter(key):
+		_err = ERR_INVALID_PARAMETER
+		return {}
 	var record := {}
 	var progress
 	for save in DirAccess.get_files_at(ProjectSettings.globalize_path(_config["save_path"].get_base_dir()).path_join(id)):
 		progress = _load_progress(save)
-		record[progress["id"]] = progress[key]
+		record[progress["id"]] = progress
 	var sorted_keys = record.keys()
-	sorted_keys.sort_custom(func(a, b): return record[a] < record[b])
+	sorted_keys.sort_custom(func(a, b): return record[a][key] < record[b][key])
 	var sorted_dictionary = {}
 	for index in sorted_keys:
 		sorted_dictionary[index] = record[index]
 	return sorted_dictionary
 
 
+## [b]SD:[/b] Returns a dictionary from progress in all user progresses, similar to [method get_parameter_stats][br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## [b]Out:[/b][br]
+## - report [Dictionary]:[br]
+## - - If there is a problem loading the users file: [code]{}[/code][br]
+## - - If the user [param id] isn't exist: [code]{}[/code][br]
+## - - If there is a problem in load, parse, decrypt, decompression: See [method get_parameter_stats][br]
+## - - Otherwise: A dictionary with [code]progress_parameter: [parameter_values][/code] format for all parameters (include "id", "index", "name", "last_open" and "last_save").[br]
+## [b]ERR:[/b][br]
+## - See [method get_last_error].
 func progress_report(id: String) -> Dictionary:
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return {}
+	if _load_users():
+		_err = _load_users()
+		return {}
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return {}
 	var report = {}
 	for parameter in get_valid_parameters():
 		report[parameter] = get_parameter_stats(id, parameter).values()
 	return report
 
 
-func get_preview_list(id: String, max_size: int) -> Array:
+## [b]SD:[/b] Returns an array from progresses with preview parameters[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## - [param max_size] [int]: max progresses array size ([code]-1[/code] is unlimited), if number of progresses greater than this parameter, removes older progresses while size is big than this.[br]
+## [b]Out:[/b][br]
+## - preview_list [Array]:[br]
+## - - If there is a problem loading the users file: See [code]{}[/code][br]
+## - - If the user [param id] isn't exist: [code]{}[/code][br]
+## - - If there is a problem in load, parse, decrypt, decompression: See [method get_progress_preview][br]
+## - - Otherwise: An array from all progresses just with preview parameters[br]
+## [b]ERR:[/b][br]
+## - See [method get_last_error].
+func get_preview_list(id: String, max_size: int = -1) -> Array:
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return []
+	if _load_users():
+		_err = _load_users()
+		return []
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return []
 	var list = []
 	var save_dir = ProjectSettings.globalize_path(_config["save_path"].get_base_dir()).path_join(id)
 	for save in DirAccess.get_files_at(save_dir):
 		list.append(get_progress_preview(id, int(save.get_file().get_basename().split("-")[1])))
-	while list.size() > max_size:
-		list.pop_front()
+	if max_size != -1:
+		while list.size() > max_size:
+			list.pop_front()
 	list.reverse()
 	return list
 
 
+## [b]SD:[/b] Returns an array from all progress parameters specified in config[br]
+## [b]In:[/b][br]
+## - NOTHING[br]
+## [b]Out:[/b][br]
+## - progress_parameters [Array]:[br]
+## - - An array from all parameters ([String]s)[br]
 func get_valid_parameters() -> Array:
 	while _config["progress_parameters"].find(" ") != -1:
 		_config["progress_parameters"] = _config["progress_parameters"].erase(_config["progress_parameters"].find(" "))
@@ -639,14 +806,33 @@ func get_valid_parameters() -> Array:
 
 
 ## [b]SD:[/b] Returns id of last saved progress[br]
+## [b]In:[/b][br]
+## - [param id] [String]: unique user id for target user.[br]
+## [b]Out:[/b][br]
+## - progress_id [int]:[br]
+## - - If there is a problem loading the users file: [code]-2[/code][br]
+## - - If the user [param id] isn't exist: [code]-2[/code][br]
+## - - If progress folder isn't exist and can't create it: [code]-2[/code][br]
+## - - If there is no saved progress for target user: [code]-1[/code][br]
+## - - Otherwise: unique id for last saved progress[br]
+## [b]ERR:[/b][br]
+## - See [method get_last_error].
 func get_last_progress_id(id: String) -> int:
-	if _killed: return -1 * ERR_CANT_CONNECT
-	if _load_users(): return -1 * ERR_FILE_CANT_READ
-	if _invalid_id(id): return -1 * ERR_INVALID_PARAMETER
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return -2
+	if _load_users():
+		_err = _load_users()
+		return -2
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return -2
 	var save_dir = ProjectSettings.globalize_path(_config["save_path"].get_base_dir()).path_join(id)
 	if not DirAccess.dir_exists_absolute(save_dir):
 		if DirAccess.make_dir_recursive_absolute(save_dir):
-			return -1 * ERR_FILE_BAD_PATH
+			_err = ERR_CANT_CREATE
+			return -2
 	if DirAccess.get_files_at(save_dir).size() == 0:
 		return -1
 	else:
@@ -656,6 +842,12 @@ func get_last_progress_id(id: String) -> int:
 
 
 ## [b]SD:[/b] Returns last saved Error in plugin[br]
+## [b]In:[/b][br]
+## - NOTHING[br]
+## [b]Out:[/b][br]
+## - Error [enum @GlobalScope.Error]:[br]
+## - - If [method is_initialized] returns [code]false[/code]: [code]ERR_CANT_CONNECT[/code][br]
+## - - If the user [param id] isn't exist: [code]ERR_DOES_NOT_FOUND[/code][br]
 func get_last_error() -> Error:
 	return _err
 

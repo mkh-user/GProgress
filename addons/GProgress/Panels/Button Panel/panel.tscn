@@ -96,7 +96,7 @@ text = "Progress Parameters:"
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "comma seperated value"
-text = "id, index, name, detailes, date, time, tag"
+text = "id, index, name, details, date, time, tags"
 placeholder_text = "comma seperated value"
 
 [node name="PreviewParameters" type="Label" parent="Scroll/Tab/Progress Settings"]
@@ -110,7 +110,7 @@ text = "Preview Parameters:"
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "comma seperated value"
-text = "name, detailes, date, time, tag"
+text = "id, index, name, date, time, tags"
 placeholder_text = "comma seperated value"
 
 [node name="Save & Backup" type="GridContainer" parent="Scroll/Tab"]
@@ -164,7 +164,7 @@ text = "Save Path:"
 
 [node name="SavePath2" type="Label" parent="Scroll/Tab/Save & Backup"]
 layout_mode = 2
-text = "user://GProgress/Saves/"
+text = "user://GProgress/Saves"
 text_overrun_behavior = 3
 
 [node name="save_path" type="Button" parent="Scroll/Tab/Save & Backup"]
@@ -214,7 +214,7 @@ text = "Backup Path:"
 
 [node name="BackupPath2" type="Label" parent="Scroll/Tab/Save & Backup"]
 layout_mode = 2
-text = "user://GProgress/Backups/"
+text = "res://GProgress/Backups"
 text_overrun_behavior = 3
 
 [node name="backup_path" type="Button" parent="Scroll/Tab/Save & Backup"]
