@@ -7,13 +7,19 @@ extends Node
 ## This script added automaticly to your project when GProgress plugin is activated and you can use it with [code]GPro[/code].[br][br]
 ## [b]Note:[/b] If plugin isn't initialized, all function with Error return type returns [code]ERR_CANT_CONNECT[/code] and other functions set last error to this error code.[br]
 
+signal autosave_request(id, last_save)
+signal backup_successful(id)
+signal backup_faild(id, error_code)
+signal error(error_code)
+
 const _CONNECTOR_FILE = "res://addons/GProgress/connector.file"
 const _USERS_FILE = "user://GProgress/Users.file"
 
 var _config: Dictionary
 var _users: Dictionary
 var _user_parameters: Array
-var _err: Error
+var _err: Error:
+	set(value): if value != OK: error.emit(value)
 var _new_user: Dictionary
 var _killed := false 
 
@@ -37,6 +43,7 @@ func _ready():
 		return
 	if not is_initialized():
 		push_error("[GProgress] [Config] [GPro] [WARNING] GProgress is not initialized; Please use GPro.initilize() one time.")
+		return
 #endregion
 
 #region manager
@@ -299,7 +306,7 @@ func get_user_parameter(id: String, key: String) -> Variant:
 	return _users[id][key]
 
 
-## [b]SD:[/b] Modify [code]last_open[/code] parameter in target user's config[br]
+## [b]SD:[/b] Modify [code]last_open[/code] parameter in target user's config and emit autosave & backup signals if need[br]
 ## [b]In:[/b][br]
 ## - [param id] [String]: unique user id for target user.[br]
 ## [b]Out:[/b][br]
@@ -314,6 +321,10 @@ func record_open_user(id: String) -> Error:
 	if _invalid_id(id): return ERR_DOES_NOT_EXIST
 	if "last_open" in _users[id].keys():
 		_users[id]["last_open"] = _get_datetime()
+	if check_autosave_time(id) and _invalid_parameter(id, "last_save"):
+		autosave_request.emit(id, _users[id]["last_save"])
+	if check_backup_time(id):
+		backup_progress(id)
 	return _save_users()
 
 
@@ -533,12 +544,23 @@ func quick_progress(id: String, parameters: Dictionary) -> Error:
 ## - - If there is a problem saving backup: See [method save_progress][br]
 ## - - Otherwise: [code]OK[/code][br]
 func backup_progress(id: String, progress_id: int = -1) -> Error:
-	if _killed: return ERR_CANT_CONNECT
-	if _load_users(): return _load_users()
-	if _invalid_id(id): return ERR_DOES_NOT_EXIST
+	if _killed:
+		backup_faild.emit(id, ERR_CANT_CONNECT)
+		return ERR_CANT_CONNECT
+	if _load_users():
+		backup_faild.emit(id, _load_users())
+		return _load_users()
+	if _invalid_id(id):
+		backup_faild.emit(id, ERR_DOES_NOT_EXIST)
+		return ERR_DOES_NOT_EXIST
 	if progress_id == -1: progress_id = get_last_progress_id(id)
 	var last_save = load_progress(id, progress_id)
-	return _save_progress(id, last_save, true, _config["backup_path"])
+	var err = _save_progress(id, last_save, true, _config["backup_path"])
+	if err:
+		backup_faild.emit(id, err)
+		return err
+	backup_successful.emit(id)
+	return OK
 
 
 ## [b]SD:[/b] Loads a backup from [param backup_path][br]
@@ -840,6 +862,69 @@ func get_last_progress_id(id: String) -> int:
 		return int(last_save.get_file().get_basename().split("-")[1])
 
 
+## @experimental
+func check_autosave_time(id: String) -> bool:
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return false
+	if _load_users():
+		_err = _load_users()
+		return false
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return false
+	if _invalid_progress_parameter("last_save"):
+		_err = ERR_INVALID_PARAMETER
+		return false
+	var last_save = _users[id]["last_save"]
+	var interval = _get_days(Time.get_date_string_from_system()) - _get_days(last_save)
+	var correct_interval = int(_config["autosave_interval"].erase(_config["autosave_inteval"].lenght() - 1))
+	match _config["autosave_inteval"][-1]:
+		"n":
+			return false
+		"d":
+			correct_interval *= 1
+		"w":
+			correct_interval *= 7
+		"m":
+			correct_interval *= 30
+		"y":
+			correct_interval *= 365
+	if interval >= correct_interval:
+		return true
+	return false
+
+
+## @experimental
+func check_backup_time(id: String) -> bool:
+	_err = OK
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return false
+	if _load_users():
+		_err = _load_users()
+		return false
+	if _invalid_id(id):
+		_err = ERR_DOES_NOT_EXIST
+		return false
+	var interval = _get_days(Time.get_date_string_from_system())
+	var correct_interval = int(_config["backup_interval"].erase(_config["backup_inteval"].lenght() - 1))
+	match _config["backup_inteval"][-1]:
+		"n":
+			return false
+		"d":
+			correct_interval *= 1
+		"w":
+			correct_interval *= 7
+		"m":
+			correct_interval *= 30
+		"y":
+			correct_interval *= 365
+	if interval % correct_interval == 0:
+		return true
+	return false
+
 
 ## [b]SD:[/b] Returns last saved Error in plugin[br]
 ## [b]In:[/b][br]
@@ -850,6 +935,13 @@ func get_last_progress_id(id: String) -> int:
 ## - - If the user [param id] isn't exist: [code]ERR_DOES_NOT_FOUND[/code][br]
 func get_last_error() -> Error:
 	return _err
+
+
+func _get_days(date: String) -> int:
+	var days = int(date.split("-", false)[2])
+	days += int(date.split("-", false)[1]) * 30
+	days += int(date.split("-", false)[0]) * 365
+	return days
 
 
 func _get_datetime() -> String:
