@@ -27,7 +27,7 @@ extends Control
 @onready var n_encryption_disable: CheckBox = $"Scroll/Tab/Save & Backup/encryption2"
 @onready var n_encryption_key: LineEdit = $"Scroll/Tab/Save & Backup/encryption_key"
 
-const CONFIG_FILE = "res://addons/GProgress/config.txt"
+const CONFIG_FILE = "res://GProgressConfig.txt"
 const CONNECTOR_FILE = "res://addons/GProgress/connector.file"
 
 var config := """user_slots:3
@@ -38,7 +38,7 @@ preview_parameters:id, index, name, date, time, tags
 autosave_interval:1m
 save_path:user://GProgress/Saves
 backup_interval:3m
-backup_path:res://GProgress/Backups
+backup_path:user://GProgressBackups
 compression:1
 encryption:1
 encryption_key:q3@g.<9gF[JK-%qqAscBcf,>?k*lOpse"""
@@ -238,7 +238,7 @@ preview_parameters:id, index, name, date, time, tags
 autosave_interval:1m
 save_path:user://GProgress/Saves
 backup_interval:3m
-backup_path:res://GProgress/Backups
+backup_path:user://GProgressBackups
 compression:1
 encryption:1
 encryption_key:q3@g.<9gF[JK-%qqAscBcf,>?k*lOpse"""

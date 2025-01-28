@@ -12,10 +12,25 @@ signal backup_successful(id)
 signal backup_faild(id, error_code)
 signal error(error_code)
 
-const _CONNECTOR_FILE = "res://addons/GProgress/connector.file"
+const _CONFIG_FILE = "res://GProgressConfig.txt"
 const _USERS_FILE = "user://GProgress/Users.file"
 
+const _CONFIG_PARAMETERS := [
+	"user_slots",
+	"user_parameters",
+	"limit_per_user",
+	"progress_parameters",
+	"preview_parameters",
+	"autosave_interval",
+	"save_path",
+	"backup_interval",
+	"backup_path",
+	"compression",
+	"encryption",
+	"encryption_key",
+]
 var _config: Dictionary
+var _config_text: String
 var _users: Dictionary
 var _user_parameters: Array
 var _err: Error:
@@ -44,6 +59,14 @@ func _ready():
 	if not is_initialized():
 		push_error("[GProgress] [Config] [GPro] [WARNING] GProgress is not initialized; Please use GPro.initilize() one time.")
 		return
+	var config_list = _config_text.split("\n", false)
+	for configure in config_list:
+		for param in _CONFIG_PARAMETERS:
+			if configure.begins_with(param + ":"):
+				if configure.count(":") > 1:
+					_config[param] = configure.split(":")[1] + ":" + configure.split(":")[2]
+					continue
+				_config[param] = configure.split(":")[1]
 #endregion
 
 #region manager
@@ -994,9 +1017,7 @@ func _load_file(path: String, defalut_value: Variant = null) -> Variant:
 
 
 func _open_config() -> Error:
-	if not FileAccess.file_exists(_CONNECTOR_FILE):
+	if not FileAccess.file_exists(_CONFIG_FILE):
 		return ERR_DOES_NOT_EXIST
-	_config = _load_file(_CONNECTOR_FILE)
-	if not "id" in _config["user_parameters"].split(","):
-		return ERR_INVALID_PARAMETER
-	return OK
+	_config_text = _load_file(_CONFIG_FILE)
+	return FileAccess.get_open_error()
