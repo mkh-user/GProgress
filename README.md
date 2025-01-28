@@ -1,4 +1,5 @@
-# GProgress - Player Progress Management in Godot
+# GProgress
+## Player Progress Management in Godot
 
 `GProgress` is a powerful and practical plugin for managing player progress in games built with the Godot game engine. This plugin allows you to efficiently save, load, and manage player progress data.
 
