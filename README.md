@@ -5,6 +5,8 @@
 > [!NOTE]
 > See [main page](https://mkh-user.gihub.io/GProgress) and [demos page](https://mkh-user.github.io/GProgress-Demos) for more information and guides.
 
+We are thrilled to introduce an exciting new plugin for Godot that truly revolutionizes the way players save and load their game states! Say farewell to the cumbersome and often frustrating processes that have long been a part of gaming; this innovative tool effectively streamlines the entire experience, transforming it into something not only simpler for the user but also remarkably efficient. With this groundbreaking plugin, you now have the ability to effortlessly capture and store vital information about each player at multiple moments in their adventure, allowing for an unprecedented level of user engagement. Just imagine the thrill and convenience of being able to pick up right where you left off, regardless of when you choose to dive back into the action! This plugin doesn't just stop there; it also opens the door to a variety of even more exciting capabilities and functionalities, ensuring that every player's gaming experience is not only seamless but also highly engaging and enjoyable. This means that players can spend less time worrying about how to save their progress and more time immersed in the captivating narratives and gameplay that your game has to offer. Get ready to enhance your game design with this essential tool that keeps players coming back for more!
+
 ## Key Features
 
 - **Save and Load Player Progress**: This feature allows you to save and load player progress at any stage of the game. Using the `save_progress` and `load_progress` functions, you can easily manage progress data.
