@@ -2,6 +2,9 @@
 
 `GProgress` is a powerful and practical plugin for managing player progress in games built with the Godot game engine. This plugin allows you to efficiently save, load, and manage player progress data.
 
+> [!NOTE]
+> See [main page](https://mkh-user.gihub.io/GProgress) and [demos page](https://mkh-user.github.io/GProgress-Demos) for more information and guides.
+
 ## Key Features
 
 - **Save and Load Player Progress**: This feature allows you to save and load player progress at any stage of the game. Using the `save_progress` and `load_progress` functions, you can easily manage progress data.
