@@ -11,3 +11,6 @@ func _enter_tree():
 func _exit_tree():
 	remove_control_from_bottom_panel(panel)
 	remove_autoload_singleton("GPro")
+
+func _get_plugin_name() -> String:
+	return "GProgress"
