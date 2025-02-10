@@ -214,7 +214,7 @@ text = "Backup Path:"
 
 [node name="BackupPath2" type="Label" parent="Scroll/Tab/Save & Backup"]
 layout_mode = 2
-text = "res://GProgress/Backups"
+text = "user://GProgressBackups"
 text_overrun_behavior = 3
 
 [node name="backup_path" type="Button" parent="Scroll/Tab/Save & Backup"]
