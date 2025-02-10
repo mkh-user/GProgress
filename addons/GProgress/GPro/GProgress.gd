@@ -5,12 +5,16 @@ extends Node
 ## 
 ## The GProgress plugin is designed to help developers manage player progress in their games. With this plugin, you can easily save, load, and manage multiple players' progress using custom clients, signals, and functions.[br]
 ## This script added automaticly to your project when GProgress plugin is activated and you can use it with [code]GPro[/code].[br][br]
-## [b]Note:[/b] If plugin isn't initialized, all function with Error return type returns [code]ERR_CANT_CONNECT[/code] and other functions set last error to this error code.[br]
+## [b]Note:[/b] If plugin isn't initialized, all function with Error return type returns [code]ERR_CANT_CONNECT[/code] and other functions set last error to this error code. Use [code]GPro.is_intialize(true)[/code] for initializing.[br]
+##
+## @tutorial(GProgress Demos: Official demos and tutorials):	https://mkh-user.github.io/GProgress-Demos
+## @tutorial(Initial tour - Official):							https://mkh-user.github.io/GProgress-Demos/Initial%20tour/Step%201
+## @tutorial(Default Setup Method - Official - Recommended):	https://mkh-user.github.io/GProgress-Demos/Default%20Setup%20Method/Installing
 
-signal autosave_request(id, last_save)
-signal backup_successful(id)
-signal backup_faild(id, error_code)
-signal error(error_code)
+signal autosave_request(id, last_save) ## [color=lightblue][b]GDClient Signal[/b][/color][br]Emit when last save is older than autosave interval.
+signal backup_successful(id) ## [color=lightblue][b]GDClient Signal[/b][/color][br] Backup is an internal function usualy, so this function can handling this debugging system.
+signal backup_failed(id, error_code) ## [color=lightblue][b]GDClient Signal[/b][/color][br] Backup is an internal function usualy, so this function can handling this debugging system.
+signal error(error_code) ## [color=lightblue][b]GDClient Signal[/b][/color][br]Emit when an error happend in plugin withuot error handling system (All functions with [method get_last_error] for debugging system).
 
 const _CONFIG_FILE = "res://GProgressConfig.txt"
 const _USERS_FILE = "user://GProgress/Users.file"
@@ -48,6 +52,9 @@ var _killed := false
 ## - [b]Soft Error:[/b] [code][GProgress] [Config] [GPro] [FATAL] Error code: %error_code%[/code][br]
 ## - [b]Error:[/b] [code][GProgress] [Main] [GPro] [ERROR] Plugin crashed, all its services were stopped until the next run of the game or restart the plugin![/code][br]
 ## - [b]Error:[/b] [code][GProgress] [Config] [GPro] [WARNING] GProgress is not initialized; Please use GPro.initilize() one time.[/code][br]
+static func trun_on_gpro():
+	push_error("[GProgress] [Main] [GPro] [ERROR] trun_on_gpro is just for documentation and you should not call it!")
+
 func _ready():
 	_err = _open_config()
 	if not _err: _err = FileAccess.get_open_error()
@@ -131,21 +138,28 @@ func initialize() -> Error:
 func create_user(parameters: Dictionary) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
+	if not parameters.has("id"): parameters["id"] = _get_valid_id()
 	if not _invalid_id(parameters["id"]): return ERR_ALREADY_EXISTS
 	if _slots_are_full(): return ERR_UNAVAILABLE
 	var keys = parameters.keys()
 	while _config["user_parameters"].find(" ") != -1:
 		_config["user_parameters"] = _config["user_parameters"].erase(_config["user_parameters"].find(" "))
 	_user_parameters = _config["user_parameters"].split(",", false)
-	if keys.size() != _user_parameters.size():
-		return ERR_INVALID_PARAMETER
-	for i in range(keys.size()):
-		if keys[i] != _user_parameters[i]:
+	for i in _user_parameters:
+		if not parameters.has(i):
 			return ERR_INVALID_PARAMETER
-		_new_user[keys[i]] = parameters[keys[i]]
+		_new_user[i] = parameters[i]
 	_users[parameters["id"]] = _new_user
 	if _save_users(): return _save_users()
 	return OK
+
+
+func _get_valid_id() -> String:
+	return str(GPro.get_all_users().keys().size())
+
+
+func get_users_count() -> int:
+	return GPro.get_all_users().keys().size()
 
 
 ## [b]SD:[/b] Deletes the specified user[br]
@@ -568,19 +582,19 @@ func quick_progress(id: String, parameters: Dictionary) -> Error:
 ## - - Otherwise: [code]OK[/code][br]
 func backup_progress(id: String, progress_id: int = -1) -> Error:
 	if _killed:
-		backup_faild.emit(id, ERR_CANT_CONNECT)
+		backup_failed.emit(id, ERR_CANT_CONNECT)
 		return ERR_CANT_CONNECT
 	if _load_users():
-		backup_faild.emit(id, _load_users())
+		backup_failed.emit(id, _load_users())
 		return _load_users()
 	if _invalid_id(id):
-		backup_faild.emit(id, ERR_DOES_NOT_EXIST)
+		backup_failed.emit(id, ERR_DOES_NOT_EXIST)
 		return ERR_DOES_NOT_EXIST
 	if progress_id == -1: progress_id = get_last_progress_id(id)
 	var last_save = load_progress(id, progress_id)
 	var err = _save_progress(id, last_save, true, _config["backup_path"])
 	if err:
-		backup_faild.emit(id, err)
+		backup_failed.emit(id, err)
 		return err
 	backup_successful.emit(id)
 	return OK
@@ -999,6 +1013,8 @@ func _slots_are_full() -> bool:
 
 
 func _save_file(path: String, value: Variant) -> Error:
+	if not DirAccess.dir_exists_absolute(ProjectSettings.globalize_path(path).get_base_dir()):
+		DirAccess.make_dir_absolute(ProjectSettings.globalize_path(path).get_base_dir())
 	var file = FileAccess.open(path, FileAccess.WRITE)
 	var error = FileAccess.get_open_error()
 	file.store_var(value)
