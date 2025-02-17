@@ -6,7 +6,7 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_j5fbo"]
 
-[node name="Control" type="Control"]
+[node name="GProgress" type="Control" node_paths=PackedStringArray("n_tab", "n_dialoge_save_path", "n_dialoge_backup_path", "n_user_slots", "n_profile_parameters", "n_limit_per_user", "n_progress_parameters", "n_preview_parameters", "n_autosave_interval", "n_autosave_interval_mode", "n_save_path", "n_save_path_action", "n_backup_interval", "n_backup_interval_mode", "n_backup_path", "n_backup_path_action", "n_compression", "n_compression_disable", "n_encryption", "n_encryption_disable", "n_encryption_key")]
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 3
 anchors_preset = 15
@@ -15,6 +15,27 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7f7ds")
+n_tab = NodePath("Scroll/Tab")
+n_dialoge_save_path = NodePath("SavePath")
+n_dialoge_backup_path = NodePath("BackupPath")
+n_user_slots = NodePath("Scroll/Tab/User Settings/user_slots")
+n_profile_parameters = NodePath("Scroll/Tab/User Settings/user_parameters")
+n_limit_per_user = NodePath("Scroll/Tab/User Settings/limit_per_user")
+n_progress_parameters = NodePath("Scroll/Tab/Progress Settings/progress_parameters")
+n_preview_parameters = NodePath("Scroll/Tab/Progress Settings/preview_parameters")
+n_autosave_interval = NodePath("Scroll/Tab/Save & Backup/autosave_interval")
+n_autosave_interval_mode = NodePath("Scroll/Tab/Save & Backup/autosave_interval2")
+n_save_path = NodePath("Scroll/Tab/Save & Backup/SavePath2")
+n_save_path_action = NodePath("Scroll/Tab/Save & Backup/save_path")
+n_backup_interval = NodePath("Scroll/Tab/Save & Backup/backup_interval")
+n_backup_interval_mode = NodePath("Scroll/Tab/Save & Backup/backup_interval2")
+n_backup_path = NodePath("Scroll/Tab/Save & Backup/BackupPath2")
+n_backup_path_action = NodePath("Scroll/Tab/Save & Backup/backup_path")
+n_compression = NodePath("Scroll/Tab/Save & Backup/compression")
+n_compression_disable = NodePath("Scroll/Tab/Save & Backup/compression2")
+n_encryption = NodePath("Scroll/Tab/Save & Backup/encryption")
+n_encryption_disable = NodePath("Scroll/Tab/Save & Backup/encryption2")
+n_encryption_key = NodePath("Scroll/Tab/Save & Backup/encryption_key")
 
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 1
@@ -58,7 +79,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Specifies the parameters required by the user."
 mouse_filter = 1
-text = "User Parameters:    "
+text = "Profile Parameters:    "
 
 [node name="user_parameters" type="LineEdit" parent="Scroll/Tab/User Settings"]
 layout_mode = 2
