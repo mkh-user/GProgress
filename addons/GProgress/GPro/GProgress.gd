@@ -1,3 +1,4 @@
+@icon("res://addons/GProgress/GPro.svg")
 class_name GProgress
 extends Node
 
