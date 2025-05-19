@@ -1,5 +1,5 @@
 user_slots:3
-user_parameters:id, index, name, last_open, last_save
+profile_parameters:id, index, name, last_open, last_save
 limit_per_user:50
 progress_parameters:id, index, name, details, date, time, tags
 preview_parameters:id, index, name, date, time, tags

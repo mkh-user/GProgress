@@ -1,12 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://ctlhad5adnkri"]
+[gd_scene load_steps=5 format=3 uid="uid://ctlhad5adnkri"]
 
 [ext_resource type="Script" path="res://addons/GProgress/Panels/Button Panel/panel.gd" id="1_7f7ds"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_rt57c"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_dlb1p"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_j5fbo"]
 
-[node name="GProgress" type="Control" node_paths=PackedStringArray("n_tab", "n_dialoge_save_path", "n_dialoge_backup_path", "n_user_slots", "n_profile_parameters", "n_limit_per_user", "n_progress_parameters", "n_preview_parameters", "n_autosave_interval", "n_autosave_interval_mode", "n_save_path", "n_save_path_action", "n_backup_interval", "n_backup_interval_mode", "n_backup_path", "n_backup_path_action", "n_compression", "n_compression_disable", "n_encryption", "n_encryption_disable", "n_encryption_key")]
+[node name="GProgress" type="Control" node_paths=PackedStringArray("n_tab_list", "n_tab", "n_dialoge_save_path", "n_dialoge_backup_path", "n_user_slots", "n_profile_parameters", "n_limit_per_user", "n_progress_parameters", "n_preview_parameters", "n_autosave_interval", "n_autosave_interval_mode", "n_save_path", "n_save_path_action", "n_backup_interval", "n_backup_interval_mode", "n_backup_path", "n_backup_path_action", "n_compression", "n_compression_disable", "n_encryption", "n_encryption_disable", "n_encryption_key")]
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 3
 anchors_preset = 15
@@ -15,6 +17,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7f7ds")
+n_tab_list = NodePath("TabList")
 n_tab = NodePath("Scroll/Tab")
 n_dialoge_save_path = NodePath("SavePath")
 n_dialoge_backup_path = NodePath("BackupPath")
@@ -37,11 +40,34 @@ n_encryption = NodePath("Scroll/Tab/Save & Backup/encryption")
 n_encryption_disable = NodePath("Scroll/Tab/Save & Backup/encryption2")
 n_encryption_key = NodePath("Scroll/Tab/Save & Backup/encryption_key")
 
+[node name="TabList" type="HFlowContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="UserSettings" type="CheckBox" parent="TabList"]
+layout_mode = 2
+button_pressed = true
+button_group = SubResource("ButtonGroup_rt57c")
+text = "User Settings"
+
+[node name="ProgressSettings" type="CheckBox" parent="TabList"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_rt57c")
+text = "Progress Settings"
+
+[node name="Save&Backup" type="CheckBox" parent="TabList"]
+layout_mode = 2
+button_group = SubResource("ButtonGroup_rt57c")
+text = "Save & Backup"
+
 [node name="Scroll" type="ScrollContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 32.0
 offset_bottom = -35.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -51,6 +77,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 current_tab = 0
+tabs_visible = false
 
 [node name="User Settings" type="GridContainer" parent="Scroll/Tab"]
 layout_mode = 2

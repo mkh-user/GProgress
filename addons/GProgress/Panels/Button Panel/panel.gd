@@ -3,6 +3,8 @@
 class_name GProgressPanel
 extends Control
 
+@export var n_tab_list: HFlowContainer
+@onready var n_frist_tab: CheckBox
 @export var n_tab: TabContainer
 @export var n_dialoge_save_path: FileDialog
 @export var n_dialoge_backup_path: FileDialog
@@ -29,7 +31,6 @@ extends Control
 @export var n_encryption_key: LineEdit
 
 const CONFIG_FILE = "res://GProgressConfig.txt"
-const CONNECTOR_FILE = "res://addons/GProgress/connector.file"
 
 var config := """user_slots:3
 profile_parameters:id, index, name, last_open, last_save
@@ -83,6 +84,9 @@ var autosave_mode = AUTOSAVE_NONE
 var backup_mode = BACKUP_NONE
 
 func _ready():
+	n_frist_tab = n_tab_list.get_child(0)
+	if not n_frist_tab.button_group.pressed.is_connected(_on_tab_changed):
+		n_frist_tab.button_group.pressed.connect(_on_tab_changed)
 	if FileAccess.file_exists(CONFIG_FILE):
 		_load_config()
 	else:
@@ -94,8 +98,12 @@ func _ready():
 				config_dictionary[param] = configure.split(":", false, 1)[1]
 	if config_parameters.size() != config_dictionary.keys().size():
 		printerr("[GProgress] [Config] [GPP] invalid formation in config file export!")
-	_save_dict()
 	update_ui()
+
+
+func _on_tab_changed(button: BaseButton):
+	n_tab.current_tab = n_tab_list.get_children().find(button)
+
 
 func update_ui():
 	n_user_slots.value = int(config_dictionary.user_slots)
@@ -204,7 +212,6 @@ func update_dict():
 	config_dictionary.encryption_key = n_encryption_key.text
 	while config_dictionary.encryption_key.length() < 32:
 		config_dictionary.encryption_key += "?"
-	_save_dict()
 
 
 func _on_save_changes(value):
@@ -241,7 +248,6 @@ compression:1
 encryption:1
 encryption_key:q3@g.<9gF[JK-%qqAscBcf,>?k*lOpse"""
 	_save_config()
-	_save_dict()
 	_ready()
 
 
@@ -272,9 +278,4 @@ func _load_config():
 func _save_config():
 	var file = FileAccess.open(CONFIG_FILE, FileAccess.WRITE)
 	file.store_string(config)
-	file.close()
-
-func _save_dict():
-	var file = FileAccess.open(CONNECTOR_FILE, FileAccess.WRITE)
-	file.store_var(config_dictionary)
 	file.close()
