@@ -3,8 +3,6 @@
 class_name GProgressPanel
 extends Control
 
-@export var n_tab_list: HFlowContainer
-@onready var n_frist_tab: CheckBox
 @export var n_tab: TabContainer
 @export var n_dialoge_save_path: FileDialog
 @export var n_dialoge_backup_path: FileDialog
@@ -84,9 +82,6 @@ var autosave_mode = AUTOSAVE_NONE
 var backup_mode = BACKUP_NONE
 
 func _ready():
-	n_frist_tab = n_tab_list.get_child(0)
-	if not n_frist_tab.button_group.pressed.is_connected(_on_tab_changed):
-		n_frist_tab.button_group.pressed.connect(_on_tab_changed)
 	if FileAccess.file_exists(CONFIG_FILE):
 		_load_config()
 	else:
@@ -99,10 +94,6 @@ func _ready():
 	if config_parameters.size() != config_dictionary.keys().size():
 		printerr("[GProgress] [Config] [GPP] invalid formation in config file export!")
 	update_ui()
-
-
-func _on_tab_changed(button: BaseButton):
-	n_tab.current_tab = n_tab_list.get_children().find(button)
 
 
 func update_ui():
