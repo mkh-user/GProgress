@@ -35,9 +35,9 @@ profile_parameters:id, index, name, last_open, last_save
 limit_per_user:50
 progress_parameters:id, index, name, details, date, time, tags
 preview_parameters:id, index, name, date, time, tags
-autosave_interval:1m
+autosave_interval:30m
 save_path:user://GProgress/Saves
-backup_interval:3m
+backup_interval:1m
 backup_path:user://GProgressBackups
 compression:1
 encryption:1
@@ -64,10 +64,9 @@ const config_parameters := [
 
 enum {
 	AUTOSAVE_NONE,
-	AUTOSAVE_DAY,
-	AUTOSAVE_WEEK,
-	AUTOSAVE_MONTH,
-	AUTOSAVE_YEAR,
+	AUTOSAVE_SECOND,
+	AUTOSAVE_MINUTE,
+	AUTOSAVE_HOUR,
 }
 
 enum {
@@ -105,18 +104,15 @@ func update_ui():
 	if config_dictionary.autosave_interval.ends_with("n"):
 		n_autosave_interval_mode.selected = 0
 		autosave_mode = AUTOSAVE_NONE
-	elif config_dictionary.autosave_interval.ends_with("d"):
+	elif config_dictionary.autosave_interval.ends_with("s"):
 		n_autosave_interval_mode.selected = 2
-		autosave_mode = AUTOSAVE_DAY
-	elif config_dictionary.autosave_interval.ends_with("w"):
-		n_autosave_interval_mode.selected = 3
-		autosave_mode = AUTOSAVE_WEEK
+		autosave_mode = AUTOSAVE_SECOND
 	elif config_dictionary.autosave_interval.ends_with("m"):
+		n_autosave_interval_mode.selected = 3
+		autosave_mode = AUTOSAVE_MINUTE
+	elif config_dictionary.autosave_interval.ends_with("h"):
 		n_autosave_interval_mode.selected = 4
-		autosave_mode = AUTOSAVE_MONTH
-	elif config_dictionary.autosave_interval.ends_with("y"):
-		n_autosave_interval_mode.selected = 5
-		autosave_mode = AUTOSAVE_YEAR
+		autosave_mode = AUTOSAVE_HOUR
 	else:
 		printerr("[GProgress] [Config] [GPP] invalid mode for auto-save interval!")
 	n_autosave_interval.value = int(config_dictionary.autosave_interval.erase(config_dictionary.autosave_interval.length() - 1))
@@ -162,13 +158,11 @@ func update_dict():
 		0:
 			append = "n"
 		2:
-			append = "d"
+			append = "s"
 		3:
-			append = "w"
-		4:
 			append = "m"
-		5:
-			append = "y"
+		4:
+			append = "h"
 		_:
 			printerr("[GProgress] [Config] [GPP] invalid mode for autosave interval!")
 	config_dictionary.autosave_interval += append
@@ -231,9 +225,9 @@ profile_parameters:id, index, name, last_open, last_save
 limit_per_user:50
 progress_parameters:id, index, name, details, date, time, tags
 preview_parameters:id, index, name, date, time, tags
-autosave_interval:1m
+autosave_interval:30m
 save_path:user://GProgress/Saves
-backup_interval:3m
+backup_interval:1m
 backup_path:user://GProgressBackups
 compression:1
 encryption:1

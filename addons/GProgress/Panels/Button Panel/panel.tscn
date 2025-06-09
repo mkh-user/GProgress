@@ -6,7 +6,7 @@
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_j5fbo"]
 
-[node name="GProgress" type="Control" node_paths=PackedStringArray("n_tab_list", "n_tab", "n_dialoge_save_path", "n_dialoge_backup_path", "n_user_slots", "n_profile_parameters", "n_limit_per_user", "n_progress_parameters", "n_preview_parameters", "n_autosave_interval", "n_autosave_interval_mode", "n_save_path", "n_save_path_action", "n_backup_interval", "n_backup_interval_mode", "n_backup_path", "n_backup_path_action", "n_compression", "n_compression_disable", "n_encryption", "n_encryption_disable", "n_encryption_key")]
+[node name="GProgress" type="Control" node_paths=PackedStringArray("n_tab", "n_dialoge_save_path", "n_dialoge_backup_path", "n_user_slots", "n_profile_parameters", "n_limit_per_user", "n_progress_parameters", "n_preview_parameters", "n_autosave_interval", "n_autosave_interval_mode", "n_save_path", "n_save_path_action", "n_backup_interval", "n_backup_interval_mode", "n_backup_path", "n_backup_path_action", "n_compression", "n_compression_disable", "n_encryption", "n_encryption_disable", "n_encryption_key")]
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 3
 anchors_preset = 15
@@ -15,7 +15,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7f7ds")
-n_tab_list = NodePath("")
 n_tab = NodePath("Scroll/Tab")
 n_dialoge_save_path = NodePath("SavePath")
 n_dialoge_backup_path = NodePath("BackupPath")
@@ -166,18 +165,16 @@ size_flags_horizontal = 3
 tooltip_text = "Unit"
 selected = 4
 allow_reselect = true
-item_count = 6
+item_count = 5
 popup/item_0/text = "Disable"
 popup/item_1/id = 10
 popup/item_1/separator = true
-popup/item_2/text = "Day"
+popup/item_2/text = "Second"
 popup/item_2/id = 1
-popup/item_3/text = "Week"
+popup/item_3/text = "Minute"
 popup/item_3/id = 2
-popup/item_4/text = "Month"
+popup/item_4/text = "Hour"
 popup/item_4/id = 3
-popup/item_5/text = "Year"
-popup/item_5/id = 4
 
 [node name="SavePath" type="Label" parent="Scroll/Tab/Save & Backup"]
 layout_mode = 2
