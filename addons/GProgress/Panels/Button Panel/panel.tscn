@@ -331,6 +331,7 @@ initial_position = 1
 size = Vector2i(600, 400)
 ok_button_text = "Select Current Folder"
 file_mode = 2
+access = 1
 
 [connection signal="value_changed" from="Scroll/Tab/User Settings/user_slots" to="." method="_on_save_changes"]
 [connection signal="text_changed" from="Scroll/Tab/User Settings/user_parameters" to="." method="_on_save_changes"]
