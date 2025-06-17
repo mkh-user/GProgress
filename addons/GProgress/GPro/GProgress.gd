@@ -124,7 +124,7 @@ func _init() -> void:
 		_config[_memory_space[1][0]] = _memory_space[1][1]
 	_clear_memory()
 	_config.progress_parameters = _remove_white_spaces(_config.progress_parameters)
-	_config.profile_parameters = _remove_white_spaces(_config._parameters)
+	_config.profile_parameters = _remove_white_spaces(_config.profile_parameters)
 
 
 ## Restarts the plugin
