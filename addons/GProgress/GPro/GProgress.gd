@@ -8,7 +8,7 @@ extends Node
 ## 
 ## [b][url=https://github.com/mkh-user/GProgress]Official Repo[/url][/b][br]
 ## MIT 2025 Mahan Khalili[br]
-## [i]Version: 0.2.0-alpha-1[/i][br][br][br]
+## [i]Version: 0.2.0-alpha-2[/i][br][br][br]
 ## The GProgress plugin is designed to help developers manage player progress in
 ## their games. With this plugin, you can easily save, load, and manage multiple 
 ## players' progress using custom clients, signals, and functions.[br]
