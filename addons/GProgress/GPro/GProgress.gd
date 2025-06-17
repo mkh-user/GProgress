@@ -3,7 +3,7 @@ class_name GProgress
 extends Node
 
 ## GProgress Plugin Documentation[br]
-## [color=ffde66]Experimental:[/color] This version is in test steps, please report any issue in project repo!
+## [color=ffde66]Experimental:[/color] You currently have a version that's in test steps, please report any issue in project repo!
 ## @experimental: This version is an alpha version!
 ## 
 ## [b][url=https://github.com/mkh-user/GProgress]Official Repo[/url][/b][br]
@@ -16,8 +16,14 @@ extends Node
 ## activated and you can use it with [code]GPro[/code].[br][br]
 ## [b]Note:[/b] If plugin isn't initialized, all function with Error return type 
 ## returns [code]ERR_CANT_CONNECT[/code] and other functions set last error to 
-## this error code. Use [code]GPro.is_intialized(true)[/code] for initializing.[br][br]
-## [b]Note:[/b] Documentation in [b]Alpha[/b] & [b]Beta[/b] [color=ffde66]is not updated[/color]; Please report any bug in project repo![br]
+## this error code. Use [code]GPro.is_initialized(true)[/code] for initializing. Example setup code:
+## [codeblock]
+## func _ready() -> void:
+##     # when plugin wasn't initialized, this function with param true will return false and initialize plugin
+##     if not GPro.is_initialized(true):
+##         GPro.restart() # after initializing GPro needs restart
+## [/codeblock]
+## [br][b]Note:[/b] Documentation in [b]Alpha[/b] & [b]Beta[/b] [color=ffde66]is not updated[/color]; Please report any bug in project repo![br]
 ##
 ## @tutorial(GProgress Demos: Official demos and tutorials):	https://mkh-user.github.io/GProgress-Demos
 ## @tutorial(،	├ Initial tour):							https://mkh-user.github.io/GProgress-Demos/Initial%20tour/Step%201
