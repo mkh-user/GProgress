@@ -26,14 +26,18 @@ We are thrilled to introduce an exciting new plugin for Godot that truly revolut
 
 2. **Configuring and Using**:
    - The plugin is automatically activated, and there is no need to add a node.
-   - Use the new `GProgress` tab that is added at the bottom of the editor to configure the plugin.
+   - Use the new `GProgress` tab that is added after `General` tab in **Project Settings** to configure the plugin.
 
 3. **Using Plugin Functions**:
    - You can access the automatically instantiated version of the plugin with the `GPro` keyword and use its functions.
-   - After installing the plugin on each project, you need to run the `GPro.initialize()` code once.
+   - After installing the plugin on each project, you need to run the `GPro.initialize()` code once. (See internal documentation for example code)
    - For the best usage practices, refer to the demo section.
 
-### Plugin Settings
+## Demo
+
+### See [GProgress Demos](https://mkh-user.github.io/GProgress-Demos) for example usage & guides 
+
+## Plugin Settings
 
 This tab includes three separate tabs:
 
