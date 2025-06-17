@@ -152,7 +152,9 @@ func _initialize() -> Error:
 func _open_config() -> Error:
 	if not GPFile.file_exists(_CONFIG_FILE):
 		return ERR_DOES_NOT_EXIST
-	_config_text = _load_file(_CONFIG_FILE)
+	var file: FileAccess = GPFile.open(_CONFIG_FILE, FileAccess.READ)
+	_config_text = file.get_as_text()
+	file.close()
 	return GPFile.get_error()
 
 #endregion
