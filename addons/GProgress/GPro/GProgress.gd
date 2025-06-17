@@ -454,8 +454,8 @@ func save_progress(parameters: Dictionary, auto_datetime: bool = true) -> Error:
 			progress.time = Time.get_time_string_from_system()
 	_err = _save_progress(progress)
 	if not _err:
-		var users_count: int = GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir().path_join(_uuid))).size()
-		if users_count > _config.limit_per_user and _config.limit_per_user != 0:
+		var progresses_count: int = GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir().path_join(_uuid))).size()
+		if progresses_count > _config.limit_per_user and _config.limit_per_user != 0:
 			var folder: String = GPFile.globalize_path(str(_config.save_path)).get_base_dir().path_join(_uuid)
 			var older_file: String = GPFile.get_files(folder)[0]
 			_err = GPFile.remove_dir(older_file)
