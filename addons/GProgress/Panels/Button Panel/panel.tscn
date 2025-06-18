@@ -84,7 +84,7 @@ text = "Profile Parameters:    "
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "comma seperated value"
-text = "id, index, name, last_open, last_save"
+text = "uuid, index, name, last_open, last_save"
 placeholder_text = "comma seperated value"
 
 [node name="LimitPerUser" type="Label" parent="Scroll/Tab/User Settings"]
@@ -119,7 +119,7 @@ text = "Progress Parameters:"
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "comma seperated value"
-text = "id, index, name, details, date, time, tags"
+text = "upid, index, name, details, date, time, tags"
 placeholder_text = "comma seperated value"
 
 [node name="PreviewParameters" type="Label" parent="Scroll/Tab/Progress Settings"]
@@ -133,7 +133,7 @@ text = "Preview Parameters:"
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "comma seperated value"
-text = "id, index, name, date, time, tags"
+text = "upid, index, name, date, time, tags"
 placeholder_text = "comma seperated value"
 
 [node name="Save & Backup" type="GridContainer" parent="Scroll/Tab"]
@@ -202,7 +202,7 @@ text = "Backup Interval:"
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Value"
-value = 3.0
+value = 1.0
 alignment = 1
 
 [node name="backup_interval2" type="OptionButton" parent="Scroll/Tab/Save & Backup"]

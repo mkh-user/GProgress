@@ -31,10 +31,10 @@ extends Control
 const CONFIG_FILE = "res://GProgressConfig.txt"
 
 var config := """user_slots:3
-profile_parameters:id, index, name, last_open, last_save
+profile_parameters:uuid, index, name, last_open, last_save
 limit_per_user:50
-progress_parameters:id, index, name, details, date, time, tags
-preview_parameters:id, index, name, date, time, tags
+progress_parameters:upid, index, name, details, date, time, tags
+preview_parameters:upid, index, name, date, time, tags
 autosave_interval:30m
 save_path:user://GProgress/Saves
 backup_interval:1m
@@ -221,10 +221,10 @@ func _on_open_file_pressed():
 
 func _on_reset_to_defaults_pressed():
 	config = """user_slots:3
-profile_parameters:id, index, name, last_open, last_save
+profile_parameters:uuid, index, name, last_open, last_save
 limit_per_user:50
-progress_parameters:id, index, name, details, date, time, tags
-preview_parameters:id, index, name, date, time, tags
+progress_parameters:upid, index, name, details, date, time, tags
+preview_parameters:upid, index, name, date, time, tags
 autosave_interval:30m
 save_path:user://GProgress/Saves
 backup_interval:1m

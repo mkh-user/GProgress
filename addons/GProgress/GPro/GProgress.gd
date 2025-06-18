@@ -3,17 +3,20 @@ class_name GProgress
 extends Node
 
 ## GProgress Plugin Documentation[br]
-## [color=ffde66]Experimental:[/color] You currently have a version that's in test steps, please report any issue in project repo!
+## [color=ffde66]Experimental:[/color] You currently have a version that's in test steps, please 
+## report any issue in project repo!
 ## @experimental: This version is an alpha version!
 ## 
 ## [b][url=https://github.com/mkh-user/GProgress]Official Repo[/url][/b][br]
 ## MIT 2025 Mahan Khalili[br]
-## [i]Version: 0.2.0-alpha-2[/i][br][br][br]
+## [i]Version: 0.2.0-alpha-3[/i][br][br]
+##
 ## The GProgress plugin is designed to help developers manage player progress in
 ## their games. With this plugin, you can easily save, load, and manage multiple 
 ## players' progress using custom clients, signals, and functions.[br]
 ## This script added automaticly to your project when GProgress plugin is 
 ## activated and you can use it with [code]GPro[/code].[br][br]
+##
 ## [b]Note:[/b] If plugin isn't initialized, all function with Error return type 
 ## returns [code]ERR_CANT_CONNECT[/code] and other functions set last error to 
 ## this error code. Use [code]GPro.is_initialized(true)[/code] for initializing. Example setup code:
@@ -22,68 +25,52 @@ extends Node
 ##     # when plugin wasn't initialized, this function with param true will return false and initialize plugin
 ##     if not GPro.is_initialized(true):
 ##         GPro.restart() # after initializing GPro needs restart
-## [/codeblock]
-## [br][b]Note:[/b] Documentation in [b]Alpha[/b] & [b]Beta[/b] [color=ffde66]is not updated[/color]; Please report any bug in project repo![br]
-##
+## [/codeblock][br]
+## [b]Note:[/b] Some signals have [color=lightblue][b]GPClient Signal[/b][/color] badge, this 
+## signals designed for create optional GPClient, see tutorials to learn create GPClient.[br][br]
+## [b]Note:[/b] Some functions have [color=dark_turquoise][b]Internal[/b][/color] badge, this
+## functions are just for call from plugin and you can see them here just for more explanation about
+## plugin logic, please don't use them!
+## 
+## [br][br][b]Note:[/b] Documentation in [b]Alpha[/b] & [b]Beta[/b] [color=ffde66]is not 
+## updated[/color]; Please report any bug in project repo![br]
+## 
 ## @tutorial(GProgress Demos: Official demos and tutorials):	https://mkh-user.github.io/GProgress-Demos
-## @tutorial(،	├ Initial tour):							https://mkh-user.github.io/GProgress-Demos/Initial%20tour/Step%201
-## @tutorial(،	└ Default Setup Method - Recommended):	https://mkh-user.github.io/GProgress-Demos/Default%20Setup%20Method/Installing
+## @tutorial(،	├ Initial tour):								https://mkh-user.github.io/GProgress-Demos/Initial%20tour/Step%201
+## @tutorial(،	└ Default Setup Method - Recommended):			https://mkh-user.github.io/GProgress-Demos/Default%20Setup%20Method/Installing
 
 ## [color=lightblue][b]GPClient Signal[/b][/color][br]
-## Emit when last save is older than autosave interval.
-signal autosave_request(uuid: String, last_save: String) 
-
+signal autosave_request(uuid: String, last_save: String)
 ## [color=lightblue][b]GPClient Signal[/b][/color][br] 
-## Backup is an internal function usualy, so this function can handling this debugging system.
 signal backup_successful(uuid: String) 
-
 ## [color=lightblue][b]GPClient Signal[/b][/color][br] 
-## Backup is an internal function usualy, so this function can handling this debugging system.
 signal backup_failed(uuid: String, error_code: Error) 
-
 ## [color=lightblue][b]GPClient Signal[/b][/color][br]
-## Emit when an error happend in plugin withuot error handling system (All functions with [method get_last_error] for debugging system).
-signal error_occurred(error_code: Error) 
-
+## Emit when an error happend in plugin withuot error handling system (All functions with 
+## [method get_last_error] for debugging system), other functions will return an [enum Error] code.
+signal error_occurred(error_code: Error)
 
 # File path for configuration file
 const _CONFIG_FILE: String = "res://GProgressConfig.txt"
-
 # File path for save users file
 const _USERS_FILE: String = "user://GProgress/Users.file"
 
-
 # Store config dictionary
 var _config: Dictionary
-
 # Store temprory string from config file
 var _config_text: String
-
 # Store users dictionary in UUID (String): parameters (Dictionary)
 var _users: Dictionary
-
 # Store user pfile keys
 var _user_profile: Array
-
 # Store error in functions
 var _err: Error:
 	set(value):
 		# Call error_occurred signal when new value isn't OK
 		if value != OK:
 			error_occurred.emit(value)
-
-# Store user parameters for new user
-var _new_user: Dictionary
-
 # Store user parameters for logined user
-var _logined_user: Dictionary:
-	set(value):
-		# Set _uuid automaticly
-		_uuid = value.uuid if value.has("uuid") else ""
-
-# Store UUID for logined user
-var _uuid: String
-
+var _logined_user: Dictionary
 # Store crash status
 var _killed: bool = false:
 	set(value):
@@ -99,13 +86,13 @@ var _killed: bool = false:
 			push_error("[GProgress] [Montoring] [GPro] [ERROR] Try to use Plugin services, all its services not available now!")
 			return true
 		return false
-
 # Use a variable for all save temprory data
 # NOTE: Use _clear_memory() every time
 var _memory_space: Array
 
 #region Base
 
+## [color=dark_turquoise][b]Internal[/b][/color][br]
 ## Activates the plugin before running the projects.
 func _init() -> void:
 	print_rich("[color=83878c]--- Start GProgress Serivces ---[/color]")
@@ -118,16 +105,18 @@ func _init() -> void:
 		push_error("[GProgress] [Initialize] [GPro] [WARNING] GProgress is not initialized; Please use GPro.initilize() one time.")
 		_killed = true
 		return
-	_memory_space[0] = _config_text.split("\n", false) # Use MS0
+	_memory_space[0] = _config_text.split("\n", false)
 	for configure: String in _memory_space[0]:
-		_memory_space[1] = configure.split(":", false, 1) # Use split limitation for file path || Use MS1
+		_memory_space[1] = configure.split(":", false, 1) # Use split limitation for file path
 		_config[_memory_space[1][0]] = _memory_space[1][1]
 	_clear_memory()
 	_config.progress_parameters = _remove_white_spaces(_config.progress_parameters)
 	_config.profile_parameters = _remove_white_spaces(_config.profile_parameters)
 
 
-## Restarts the plugin
+## Restarts the plugin. Will call [method _init] and check its effect.
+## When [param reset_when_failed] is [code]true[/code] will reset config file data to default value.
+## (needs Admin access)
 func restart(reset_when_failed: bool = false) -> void:
 	if _killed:
 		printerr("[GProgress] [Main] [GPro] [MESSAGE] Trying to restart and fix bugs.")
@@ -141,7 +130,9 @@ func restart(reset_when_failed: bool = false) -> void:
 			restart()
 
 
-## Checks plugin initialization
+## Checks plugin initialization, will return [code]true[/code] if plugin is initialized.
+## When plugin isn't initialized and [param initialize_if_not] is [code]true[/code] will call 
+## [method _initialize].
 func is_initialized(initialize_if_not: bool = false) -> bool:
 	if GPFile.file_exists(_USERS_FILE):
 		return true
@@ -150,7 +141,8 @@ func is_initialized(initialize_if_not: bool = false) -> bool:
 		return false
 
 
-# Initializes the plugin
+## [color=dark_turquoise][b]Internal[/b][/color][br]
+## Initializes the plugin with create a file for users' data.
 func _initialize() -> Error:
 	return _save_file(_USERS_FILE, {})
 
@@ -200,8 +192,8 @@ func _remove_white_spaces(text: String) -> String:
 	return text
 
 
-# Returns true if all slots are full
-func _slots_are_full() -> bool:
+## Returns true if all slots are full.
+func slots_are_full() -> bool:
 	return _users.keys().size() >= int(_config.user_slots)
 
 
@@ -218,18 +210,20 @@ func _invalid_uuid(uuid: String) -> bool:
 	return not uuid in _users.keys()
 
 
-# Returns true if parameter key exists in user parameters
+# Returns false if parameter key exists in user profile
 func _invalid_profile_parameter(key: String) -> bool:
 	if not _auth(): return true
-	return not key in _users[_uuid].keys()
+	return not key in _users[_logined_user.uuid].keys()
 
 
 # Returns true if a user is logined
 func _auth() -> bool:
-	return _logined_user != {}
+	if _logined_user != {}:
+		return not _invalid_uuid(_logined_user.uuid)
+	else: return false
 
 
-# Returns true if parameter key exists in progress parameters
+# Returns false if parameter key exists in progress parameters
 func _invalid_progress_parameter(key: String) -> bool:
 	return not key in _config.progress_parameters.split(",", false)
 
@@ -254,23 +248,24 @@ func _save_users() -> Error:
 
 #region User Manager
 
-## Adds a new user
+## Adds a new user, will return [constant ERR_UNAVAILABLE] if all slots are full.
 func create_user(profile: Dictionary) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _slots_are_full(): return ERR_UNAVAILABLE
+	if slots_are_full(): return ERR_UNAVAILABLE
 	if _auth(): _logined_user = {}
 	profile.uuid = _get_valid_uuid()
 	_clear_memory()
 	_user_profile = _config.profile_parameters.split(",", false)
-	for user_key: String in _user_profile:
-		if not profile.has(user_key): continue
-		_new_user[user_key] = profile[user_key]
+	var _new_user: Dictionary
+	for profile_key: String in _user_profile:
+		if (not profile.has(profile_key)) or _invalid_profile_parameter(profile_key): continue
+		_new_user[profile_key] = profile[profile_key]
 	_users[profile.uuid] = _new_user
 	return _save_users()
 
 
-## Returns count of users, you can use it for UI setup
+## Returns count of users, you can use it for UI setup. (see also [method slots_are_full])
 func get_users_count() -> void:
 	return get_user_uuids().size()
 
@@ -288,27 +283,27 @@ func _get_valid_uuid() -> String:
 	return _memory_space[1]
 
 
-## Deletes the specified user
+## Deletes currently logined user.
 func remove_user() -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if not _invalid_uuid(_uuid): return ERR_INVALID_PARAMETER
-	_users.erase(_uuid)
-	var user_saves: String = GPFile.globalize_path(str(_config.save_path.join_path(_uuid)))
+	if not _auth(): return ERR_UNAUTHORIZED
+	_users.erase(_logined_user.uuid)
+	var user_saves: String = GPFile.globalize_path(str(_config.save_path.join_path(_logined_user.uuid)))
 	if GPFile.dir_exists(user_saves):
 		var _error: Error = GPFile.remove_dir(user_saves)
 		if _error: return _error
 	return _save_users()
 
 
-## Returns an array from any users id
+## Returns an array from any users' uuid.
 func get_user_uuids() -> Array:
 	_err = OK
 	if _killed:
 		_err = ERR_CANT_CONNECT
 		return []
 	if _load_users():
-		_err = _load_users()
+		_err = GPFile.get_error()
 		return []
 	return _users.keys()
 
@@ -317,7 +312,7 @@ func get_user_uuids() -> Array:
 
 #region User Profile
 
-## Returns a dictionary from all users with their configs
+## Returns a dictionary from all users with their profiles based on uuids.
 func get_all_profiles() -> Dictionary:
 	_err = OK
 	if _killed:
@@ -329,7 +324,8 @@ func get_all_profiles() -> Dictionary:
 	return _users
 
 
-## Returns a dictionary from specified parameter in all user configs by user id
+## Returns a dictionary from specified profile parameter in all user configs by users' uuid.
+## Useful for sort and search actions.
 func get_parameter_in_all_profiles(key: String) -> Dictionary:
 	_err = OK
 	if _killed:
@@ -344,8 +340,8 @@ func get_parameter_in_all_profiles(key: String) -> Dictionary:
 	return parameters
 
 
-## Returns a dictionary from specified user configs
-func get_all_uuids() -> Dictionary:
+## Returns a dictionary from profile for user with [param uuid].
+func get_profile(uuid: String) -> Dictionary:
 	_err = OK
 	if _killed:
 		_err = ERR_CANT_CONNECT
@@ -353,58 +349,32 @@ func get_all_uuids() -> Dictionary:
 	if _load_users():
 		_err = _load_users()
 		return {}
-	if _invalid_uuid(_uuid):
+	if _invalid_uuid(uuid):
 		_err = ERR_DOES_NOT_EXIST
 		return {}
-	return _users[_uuid]
+	return _users[uuid]
 
 
-## Sets specified user configs from a dictionary
-func set_profile(parameters: Dictionary) -> Error:
+## Updates profile for user with [param uuid] from a dictionary, will keep [code]"id", "last_open", "last_save"[/code]
+## values.
+func update_profile(uuid: String, parameters: Dictionary) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if not _auth(): return ERR_DOES_NOT_EXIST
+	if _invalid_uuid(uuid): return ERR_DOES_NOT_EXIST
 	for key: String in parameters.keys():
-		if key in ["id", "last_open", "last_save"]:
+		if key in ["uuid", "last_open", "last_save"]:
 			continue
 		if _invalid_profile_parameter(key): return ERR_INVALID_PARAMETER
-		_users[_uuid][key] = parameters[key]
+		_users[uuid][key] = parameters[key]
 	return _save_users()
-
-
-## Sets specified user config parameter to [param value]
-func set_profile_parameter(key: String, value: Variant) -> Error:
-	if _killed: return ERR_CANT_CONNECT
-	if _load_users(): return _load_users()
-	if key in ["id", "last_save", "last_open"]: return ERR_LOCKED
-	if _invalid_uuid(_uuid): return ERR_DOES_NOT_EXIST
-	_users[_uuid][key] = value
-	return _save_users()
-
-
-## Returns value saved in target user's configs
-func get_profile_parameter(id: String, key: String) -> Variant:
-	_err = OK
-	if _killed:
-		_err = ERR_CANT_CONNECT
-		return null
-	if _load_users():
-		_err = ERR_CANT_CONNECT
-		return null
-	if _invalid_uuid(id):
-		_err = ERR_DOES_NOT_EXIST
-		return null
-	if _invalid_profile_parameter(key):
-		_err = ERR_INVALID_PARAMETER
-		return null
-	return _users[id][key]
 
 #endregion
 
 
 #region Authentication
 
-## Modify [code]last_open[/code] parameter in target user's config and emit autosave & backup signals if need
+## Modify [code]last_open[/code] parameter in target user's profile and emit autosave signal & 
+## backup function if need.
 func login_user(uuid: String) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
@@ -416,32 +386,46 @@ func login_user(uuid: String) -> Error:
 	if check_backup_time(uuid):
 		backup_progress()
 	_logined_user = _users[uuid]
+	_logined_user.uuid = uuid
 	return _save_users()
 
 
+## Check for autosave and backup and logout currently logined user.
 func logout_user() -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
+	if not _auth(): return ERR_UNAUTHORIZED
 	if check_autosave_time() and _invalid_profile_parameter("last_save"):
-		autosave_request.emit(_uuid, _users[_uuid].last_save)
+		autosave_request.emit(_logined_user.uuid, _users[_logined_user.uuid].last_save)
 		return ERR_ALREADY_IN_USE
-	if check_backup_time(_uuid):
+	if check_backup_time(_logined_user.uuid):
 		backup_progress()
 		return ERR_ALREADY_IN_USE
 	_logined_user = {}
 	return OK
+
+
+## Returns uuid for currently logined user or [code]""[/code].
+func get_logined_user_uuid() -> String:
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return ""
+	if _load_users():
+		_err = _load_users()
+		return ""
+	return _logined_user.uuid
 
 #endregion
 
 
 #region Progress Manager
 
-## Saves new progress for target user
+## Saves new progress for currently logined user.
 func save_progress(parameters: Dictionary, auto_datetime: bool = true) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if not _auth(): return ERR_LOCKED
-	if _invalid_uuid(_uuid): return ERR_DOES_NOT_EXIST
+	if not _auth(): return ERR_UNAUTHORIZED
+	if _invalid_uuid(_logined_user.uuid): return ERR_DOES_NOT_EXIST
 	var progress: Dictionary = {}
 	for key: String in parameters.keys():
 		if _invalid_progress_parameter(key): continue
@@ -454,17 +438,17 @@ func save_progress(parameters: Dictionary, auto_datetime: bool = true) -> Error:
 			progress.time = Time.get_time_string_from_system()
 	_err = _save_progress(progress)
 	if not _err:
-		var progresses_count: int = GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir().path_join(_uuid))).size()
+		var progresses_count: int = GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir().path_join(_logined_user.uuid))).size()
 		if progresses_count > _config.limit_per_user and _config.limit_per_user != 0:
-			var folder: String = GPFile.globalize_path(str(_config.save_path)).get_base_dir().path_join(_uuid)
+			var folder: String = GPFile.globalize_path(str(_config.save_path)).get_base_dir().path_join(_logined_user.uuid)
 			var older_file: String = GPFile.get_files(folder)[0]
 			_err = GPFile.remove_dir(older_file)
-		_users[_uuid].last_save = _get_datetime()
+		_users[_logined_user.uuid].last_save = _get_datetime()
 		return _save_users()
 	return _err
 
 
-## Load specified progress from target user
+## Load specified progress from currently logined user.
 func load_progress(upid: int) -> Dictionary:
 	_err = OK
 	if _killed:
@@ -474,12 +458,12 @@ func load_progress(upid: int) -> Dictionary:
 		_err = _load_users()
 		return {}
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return {}
-	if _invalid_uuid(_uuid):
+	if _invalid_uuid(_logined_user.uuid):
 		_err = ERR_DOES_NOT_EXIST
 		return {}
-	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_uuid)
+	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_logined_user.uuid)
 	if not GPFile.dir_exists(save_dir):
 		_err = ERR_DOES_NOT_EXIST
 		return {}
@@ -509,9 +493,9 @@ func load_progress(upid: int) -> Dictionary:
 #region Private
 
 func _save_progress(progress: Dictionary, in_costum_dir: bool = false, custom_dir: String = "") -> Error:
-	var save_dir: String = GPFile.globalize_path(str(_config.save_path.get_base_dir())).path_join(_uuid)
+	var save_dir: String = GPFile.globalize_path(str(_config.save_path.get_base_dir())).path_join(_logined_user.uuid)
 	if in_costum_dir: save_dir = custom_dir
-	if not GPFile.dir_exists(save_dir):
+	if not GPFile.dir_exists(save_dir.get_base_dir()):
 		if GPFile.make_dir(save_dir):
 			return GPFile.make_dir(save_dir)
 	var save_path: String = save_dir.path_join("GProgressSave-{upid}.gpro".format({"upid": str(progress.upid)}))
@@ -543,7 +527,7 @@ func _load_progress(path: String) -> Dictionary:
 		_err = _load_users()
 		return {}
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return {}
 	var save_dir: String = GPFile.globalize_path(path.get_base_dir())
 	if not GPFile.dir_exists(save_dir):
@@ -574,25 +558,26 @@ func _load_progress(path: String) -> Dictionary:
 
 #endregion
 
-## Removes specified progress from target user
+## Removes specified progress from progresses of currently logined user.
 func remove_progress(upid: int) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _invalid_uuid(_uuid): return ERR_DOES_NOT_EXIST
-	if not _auth(): return ERR_LOCKED
-	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_uuid)
+	if _invalid_uuid(_logined_user.uuid): return ERR_DOES_NOT_EXIST
+	if not _auth(): return ERR_UNAUTHORIZED
+	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_logined_user.uuid)
 	if not GPFile.dir_exists(save_dir):
 		return ERR_DOES_NOT_EXIST
 	var save_path: String = save_dir.path_join("GProgressSave-{upid}.gpro".format({"upid": str(upid)}))
 	return GPFile.remove_dir(save_path)
 
 
-## Quickly saves a progress, default parameters are automatically set (even if they exist in the dictionary)
+## Quickly saves a progress, default parameters are automatically set even if they exist in the 
+## dictionary based on configs.
 func quick_progress(parameters: Dictionary) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _invalid_uuid(_uuid): return ERR_DOES_NOT_EXIST
-	if not _auth(): return ERR_LOCKED
+	if _invalid_uuid(_logined_user.uuid): return ERR_DOES_NOT_EXIST
+	if not _auth(): return ERR_UNAUTHORIZED
 	var progress: Dictionary = {}
 	for key: String in parameters.keys():
 		if _invalid_progress_parameter(key): continue
@@ -607,44 +592,67 @@ func quick_progress(parameters: Dictionary) -> Error:
 
 #region Backup System
 
-## Creates a backup in backup path
+## Creates a backup in backups folder.
 func backup_progress(upid: int = -1) -> Error:
 	if _killed:
-		backup_failed.emit(_uuid, ERR_CANT_CONNECT)
+		backup_failed.emit(_logined_user.uuid, ERR_CANT_CONNECT)
 		return ERR_CANT_CONNECT
 	if _load_users():
-		backup_failed.emit(_uuid, _load_users())
+		backup_failed.emit(_logined_user.uuid, _load_users())
 		return _load_users()
-	if _invalid_uuid(_uuid):
-		backup_failed.emit(_uuid, ERR_DOES_NOT_EXIST)
+	if _invalid_uuid(_logined_user.uuid):
+		backup_failed.emit(_logined_user.uuid, ERR_DOES_NOT_EXIST)
 		return ERR_DOES_NOT_EXIST
 	if not _auth():
-		backup_failed.emit(_uuid, ERR_LOCKED)
-		return ERR_LOCKED
+		backup_failed.emit(_logined_user.uuid, ERR_UNAUTHORIZED)
+		return ERR_UNAUTHORIZED
 	if upid == -1: upid = get_last_upid()
 	var last_save: Dictionary = load_progress(upid)
-	var err: Error = _save_progress(last_save, true, str(_config.backup_path))
+	var err: Error = _save_progress(last_save, true, str(_config.backup_path.path_join(_logined_user.uuid)))
 	if err:
-		backup_failed.emit(_uuid, err)
+		backup_failed.emit(_logined_user.uuid, err)
 		return err
-	backup_successful.emit(_uuid)
+	backup_successful.emit(_logined_user.uuid)
 	return OK
 
 
-## Loads a backup from [param backup_path]
-func load_backup_progress(backup_path: String) -> Error:
+## Loads a backup from [param backup_file].
+func load_backup_progress(backup_file: String) -> Error:
 	if _killed: return ERR_CANT_CONNECT
 	if _load_users(): return _load_users()
-	if _invalid_uuid(_uuid): return ERR_DOES_NOT_EXIST
-	if not _auth(): return ERR_LOCKED
-	var backup: Dictionary = _load_progress(backup_path)
+	if _invalid_uuid(_logined_user.uuid): return ERR_DOES_NOT_EXIST
+	if not _auth(): return ERR_UNAUTHORIZED
+	var backup: Dictionary = _load_progress(backup_file)
 	if backup == {}: return ERR_FILE_CANT_READ
 	return save_progress(backup)
 
 
-## Returns an array with all saved backup files in backup path in configs
+## Returns path to backup folder for currently logined user.
+func get_backup_folder() -> String:
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return ""
+	if _load_users():
+		_err = _load_users()
+		return ""
+	if not _auth():
+		_err = ERR_UNAUTHORIZED
+		return ""
+	return _config.backup_path.path_join(_logined_user.uuid)
+
+
+## Returns an array with all saved backup files in backup path in configs.
 func get_backups_list() -> Array:
-	return GPFile.get_files(_config.backup_path)
+	if _killed:
+		_err = ERR_CANT_CONNECT
+		return []
+	if _load_users():
+		_err = _load_users()
+		return []
+	if not _auth():
+		_err = ERR_UNAUTHORIZED
+		return []
+	return GPFile.get_files(_config.backup_path.path_join(_logined_user.uuid))
 
 ## @experimental
 func check_backup_time(uuid: String) -> bool:
@@ -679,7 +687,8 @@ func check_backup_time(uuid: String) -> bool:
 
 #region Statistic Manager
 
-## Returns a dictionary from specified parameter in user progresses by date-time, date, time or progress id
+## Returns a dictionary from specified parameter in user progresses by date-time, date, time or 
+## progress id based on configs.
 func get_parameter_statistics(key: String) -> Dictionary:
 	_err = OK
 	if _killed:
@@ -688,11 +697,8 @@ func get_parameter_statistics(key: String) -> Dictionary:
 	if _load_users():
 		_err = _load_users()
 		return {}
-	if _invalid_uuid(_uuid):
-		_err = ERR_DOES_NOT_EXIST
-		return {}
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return {}
 	if _invalid_progress_parameter(key):
 		_err = ERR_INVALID_PARAMETER
@@ -701,7 +707,7 @@ func get_parameter_statistics(key: String) -> Dictionary:
 	var use_time: bool = not _invalid_progress_parameter("time")
 	var stats: Dictionary = {}
 	var progress: Dictionary
-	for save: String in GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_uuid)):
+	for save: String in GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_logined_user.uuid)):
 		progress = _load_progress(save)
 		match use_date:
 			true:
@@ -719,8 +725,8 @@ func get_parameter_statistics(key: String) -> Dictionary:
 	return stats
 
 
-## Returns an array from all progresses for target user in order by specified key
-func order_by_parameter_in_array(key: String) -> Array:
+## Returns an array from all progresses for target user in order by specified key.
+func get_progress_upid_by_parameter(key: String) -> Array:
 	_err = OK
 	if _killed:
 		_err = ERR_CANT_CONNECT
@@ -728,59 +734,49 @@ func order_by_parameter_in_array(key: String) -> Array:
 	if _load_users():
 		_err = _load_users()
 		return []
-	if _invalid_uuid(_uuid):
-		_err = ERR_DOES_NOT_EXIST
-		return []
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return []
 	if _invalid_progress_parameter(key):
 		_err = ERR_INVALID_PARAMETER
 		return []
 	var record: Dictionary = {}
 	var progress: Dictionary
-	for save: String in GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_uuid)):
+	for save: String in GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_logined_user.uuid)):
 		progress = _load_progress(save)
-		record[progress["id"]] = progress
+		record[progress.upid] = progress
 	var sorted_keys: Array = record.keys()
 	sorted_keys.sort_custom(func sorter(a: Dictionary, b: Dictionary) -> bool: return record[a][key] < record[b][key])
 	return sorted_keys
 
 
-## @experimental
-## [color=ffde66]Experimental:[/color] Sort system in this function is experimental, recommended use [method order_by_parameter_in_array] instead.[br]
-## Returns a dictionary from all progresses for target user in order by specified key.
-func order_by_parameter_in_dictionary(key: String) -> Dictionary:
+## Returns an array from all progresses for target user in order by specified key.
+func get_progress_sorted_by_parameter(key: String) -> Array:
 	_err = OK
 	if _killed:
 		_err = ERR_CANT_CONNECT
-		return {}
+		return []
 	if _load_users():
 		_err = _load_users()
-		return {}
-	if _invalid_uuid(_uuid):
-		_err = ERR_DOES_NOT_EXIST
-		return {}
+		return []
 	if not _auth():
-		_err = ERR_LOCKED
-		return {}
+		_err = ERR_UNAUTHORIZED
+		return []
 	if _invalid_progress_parameter(key):
 		_err = ERR_INVALID_PARAMETER
-		return {}
+		return []
 	var record: Dictionary = {}
 	var progress: Dictionary
-	for save: String in GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_uuid)):
+	for save: String in GPFile.get_files(GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_logined_user.uuid)):
 		progress = _load_progress(save)
-		record[progress["id"]] = progress
-	var sorted_keys: Array = record.keys()
+		record[progress.upid] = progress
+	var sorted_keys: Array = record.values()
 	sorted_keys.sort_custom(func sorter(a: Dictionary, b: Dictionary) -> bool: return record[a][key] < record[b][key])
-	var sorted_dictionary: Dictionary = {}
-	for index: Dictionary in sorted_keys:
-		sorted_dictionary[index] = record[index]
-	return sorted_dictionary
+	return sorted_keys
 
 
-## Returns a dictionary from progress in all user progresses, similar to [method get_parameter_stats]
+## Returns a dictionary from progress in all user progresses, [method get_parameter_statistics] for
+## each parameter.
 func progress_report() -> Dictionary:
 	_err = OK
 	if _killed:
@@ -789,11 +785,8 @@ func progress_report() -> Dictionary:
 	if _load_users():
 		_err = _load_users()
 		return {}
-	if _invalid_uuid(_uuid):
-		_err = ERR_DOES_NOT_EXIST
-		return {}
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return {}
 	var report: Dictionary = {}
 	for parameter: String in get_valid_parameters():
@@ -804,7 +797,7 @@ func progress_report() -> Dictionary:
 
 #region Preview
 
-## Returns a dictionary from specified progress in user progresses include preview parameters
+## Returns a dictionary from specified progress in user progresses include preview parameters.
 func get_progress_preview(upid: int) -> Dictionary:
 	_err = OK
 	if _killed:
@@ -813,11 +806,11 @@ func get_progress_preview(upid: int) -> Dictionary:
 	if _load_users():
 		_err = _load_users()
 		return {}
-	if _invalid_uuid(_uuid):
+	if _invalid_uuid(_logined_user.uuid):
 		_err = ERR_DOES_NOT_EXIST
 		return {}
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return {}
 	var progress: Dictionary = load_progress(upid)
 	var preview: Dictionary = {}
@@ -829,7 +822,7 @@ func get_progress_preview(upid: int) -> Dictionary:
 	return preview
 
 
-## Returns an array from progresses with preview parameters
+## Returns an array from progresses with preview parameters.
 func get_preview_list(max_size: int = -1) -> Array:
 	_err = OK
 	if _killed:
@@ -838,14 +831,14 @@ func get_preview_list(max_size: int = -1) -> Array:
 	if _load_users():
 		_err = _load_users()
 		return []
-	if _invalid_uuid(_uuid):
+	if _invalid_uuid(_logined_user.uuid):
 		_err = ERR_DOES_NOT_EXIST
 		return []
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return []
 	var list: Array = []
-	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_uuid)
+	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_logined_user.uuid)
 	for save: String in GPFile.get_files(save_dir):
 		list.append(get_progress_preview(int(save.get_file().get_basename().split("-")[1])))
 	if max_size != -1:
@@ -858,14 +851,15 @@ func get_preview_list(max_size: int = -1) -> Array:
 
 #region Parameters
 
-## Returns an array from all progress parameters specified in config
+## Returns an array from all progress parameters specified in config.
 func get_valid_parameters() -> Array:
 	_config.progress_parameters = _remove_white_spaces(_config.progress_parameters)
 	return _config.progress_parameters.split(",", false)
 
 #endregion
 
-## Returns id of last saved progress
+## Returns id of last saved progress, [code]-2[/code] for errors and [code]-1[/code] when user
+## havn't saved progress.
 func get_last_upid() -> int:
 	_err = OK
 	if _killed:
@@ -874,13 +868,10 @@ func get_last_upid() -> int:
 	if _load_users():
 		_err = _load_users()
 		return -2
-	if _invalid_uuid(_uuid):
-		_err = ERR_DOES_NOT_EXIST
-		return -2
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return -2
-	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_uuid)
+	var save_dir: String = GPFile.globalize_path(str(_config.save_path).get_base_dir()).path_join(_logined_user.uuid)
 	if not GPFile.dir_exists(save_dir):
 		if GPFile.make_dir(save_dir):
 			_err = ERR_CANT_CREATE
@@ -902,16 +893,16 @@ func check_autosave_time() -> bool:
 	if _load_users():
 		_err = _load_users()
 		return false
-	if _invalid_uuid(_uuid):
+	if _invalid_uuid(_logined_user.uuid):
 		_err = ERR_DOES_NOT_EXIST
 		return false
 	if not _auth():
-		_err = ERR_LOCKED
+		_err = ERR_UNAUTHORIZED
 		return false
 	if _invalid_progress_parameter("last_save"):
 		_err = ERR_INVALID_PARAMETER
 		return false
-	var last_save: String = _users[_uuid].last_save
+	var last_save: String = _users[_logined_user.uuid].last_save
 	var interval: int = _get_days(Time.get_date_string_from_system()) - _get_days(last_save)
 	var correct_interval: int = int(str(_config.autosave_interval).erase(str(_config.autosave_inteval).length() - 1))
 	match _config.autosave_inteval[-1]:
@@ -936,7 +927,7 @@ func check_autosave_time() -> bool:
 
 #region Debugging
 
-## Returns last saved Error in plugin
+## Returns last saved Error in plugin.
 func get_last_error() -> Error:
 	return _err
 
