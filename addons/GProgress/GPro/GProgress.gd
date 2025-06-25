@@ -5,11 +5,11 @@ extends Node
 ## GProgress Plugin Documentation[br]
 ## [color=ffde66]Experimental:[/color] You currently have a version that's in test steps, please 
 ## report any issue in project repo!
-## @experimental: This version is an alpha version!
+## @experimental: This version is an beta version!
 ## 
 ## [b][url=https://github.com/mkh-user/GProgress]Official Repo[/url][/b][br]
 ## MIT 2025 Mahan Khalili[br]
-## [i]Version: 0.2.0-alpha-3[/i][br][br]
+## [i]Version: 0.2.0-beta-1[/i][br][br]
 ##
 ## The GProgress plugin is designed to help developers manage player progress in
 ## their games. With this plugin, you can easily save, load, and manage multiple 
