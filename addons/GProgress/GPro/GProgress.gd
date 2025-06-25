@@ -266,7 +266,7 @@ func create_user(profile: Dictionary) -> Error:
 
 
 ## Returns count of users, you can use it for UI setup. (see also [method slots_are_full])
-func get_users_count() -> void:
+func get_users_count() -> int:
 	return get_user_uuids().size()
 
 
