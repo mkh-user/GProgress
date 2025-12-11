@@ -6,7 +6,15 @@
 > [!NOTE]
 > See [main page](https://mkh-user.github.io/GProgress) and [demos page](https://mkh-user.github.io/GProgress-Demos) for more information and guides.
 
-We are thrilled to introduce an exciting new plugin for Godot that truly revolutionizes the way players save and load their game states! Say farewell to the cumbersome and often frustrating processes that have long been a part of gaming; this innovative tool effectively streamlines the entire experience, transforming it into something not only simpler for the user but also remarkably efficient. With this groundbreaking plugin, you now have the ability to effortlessly capture and store vital information about each player at multiple moments in their adventure, allowing for an unprecedented level of user engagement. Just imagine the thrill and convenience of being able to pick up right where you left off, regardless of when you choose to dive back into the action! This plugin doesn't just stop there; it also opens the door to a variety of even more exciting capabilities and functionalities, ensuring that every player's gaming experience is not only seamless but also highly engaging and enjoyable. This means that players can spend less time worrying about how to save their progress and more time immersed in the captivating narratives and gameplay that your game has to offer. Get ready to enhance your game design with this essential tool that keeps players coming back for more!
+Got it — here’s the English version, shortened and split into clear paragraphs with smoother phrasing:  
+
+We’re excited to introduce a powerful new plugin for Godot that transforms the way players save and load their progress!  
+
+No more clunky or frustrating processes — this tool makes saving and restoring game states simple, fast, and reliable. It allows you to capture essential player data at multiple points in their journey, ensuring a seamless experience every time.  
+
+Imagine the convenience of picking up exactly where you left off, no matter when you return to the game. This plugin not only streamlines progress management but also unlocks new possibilities for deeper engagement and creative gameplay design.  
+
+With less time spent worrying about saving, players can stay fully immersed in your stories and mechanics — and keep coming back for more.
 
 ## Key Features
 
